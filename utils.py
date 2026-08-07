@@ -23,41 +23,56 @@ def analisar_imagem_com_gemini(imagem_upload):
         # Carrega a imagem enviada
         imagem = Image.open(imagem_upload)
         
-        # Modelo atualizado e estável
-        # Caso gemini-2.0-flash não esteja disponível na sua conta, altere para 'gemini-1.5-pro'
-        model = genai.GenerativeModel(
-            model_name='gemini-2.0-flash',
-            generation_config={"response_mime_type": "application/json"}
-        )
-        
         prompt = """
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne um JSON com a seguinte estrutura:
+        Retorne ESTRITAMENTE um JSON sem formatação markdown no seguinte formato:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
-          "dificuldade": "Baixa" ou "Média" ou "Alta" ou "Muito Alta",
+          "dificuldade": "Baixa",
           "tempo_estimado_minutos": 180,
           "observacao": "Uma breve explicação sobre a densidade ou tamanho que influenciou o tempo estimado."
         }
         """
+
+        # Lista de modelos em ordem de preferência (usando a nomenclatura padrão da API)
+        modelos_para_testar = [
+            'gemini-2.5-flash',
+            'gemini-1.5-flash',
+            'models/gemini-1.5-flash',
+            'models/gemini-2.5-flash'
+        ]
         
-        response = model.generate_content([prompt, imagem])
-        
-        # Converte a resposta estruturada em dicionário
-        dados = json.loads(response.text)
+        response = None
+        erro_ultimo = None
+
+        for modelo_nome in modelos_para_testar:
+            try:
+                model = genai.GenerativeModel(modelo_nome)
+                response = model.generate_content([prompt, imagem])
+                if response and response.text:
+                    break
+            except Exception as e:
+                erro_ultimo = e
+                continue
+
+        if not response or not response.text:
+            raise Exception(f"Nenhum modelo respondeu com sucesso. Último erro: {erro_ultimo}")
+
+        # Limpa marcadores de código Markdown caso a IA devolva ```json ... ```
+        texto_limpo = response.text.strip()
+        if texto_limpo.startswith("```"):
+            lines = texto_limpo.splitlines()
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].startswith("```"):
+                lines = lines[:-1]
+            texto_limpo = "\n".join(lines).strip()
+
+        dados = json.loads(texto_limpo)
         return dados
         
     except Exception as e:
-        # Fallback caso o modelo 2.0 ainda não esteja ativo na chave
-        try:
-            model = genai.GenerativeModel(
-                model_name='gemini-1.5-pro',
-                generation_config={"response_mime_type": "application/json"}
-            )
-            response = model.generate_content([prompt, imagem])
-            return json.loads(response.text)
-        except Exception as err_fallback:
-            st.error(f"Erro ao analisar imagem com IA: {err_fallback}")
-            return None
+        st.error(f"Erro ao analisar imagem com IA: {e}")
+        return None
