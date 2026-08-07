@@ -17,13 +17,11 @@ def formatar_tempo(minutos):
 def analisar_imagem_com_gemini(imagem_upload):
     """Envia a imagem para a API Gemini e retorna a estimativa de tempo e complexidade."""
     try:
-        # 1. Recupera a chave salva nas Secrets do Streamlit Cloud
+        # 1. Chave e Cliente da SDK oficial
         api_key = st.secrets["gemini"]["api_key"]
-        
-        # Cria o cliente usando a nova SDK oficial google-genai
         client = genai.Client(api_key=api_key)
         
-        # 2. Processa a imagem para garantir compatibilidade
+        # 2. Processa a imagem para garantir compatibilidade RGB
         imagem_upload.seek(0)
         bytes_imagem = imagem_upload.read()
         imagem_pil = Image.open(io.BytesIO(bytes_imagem))
@@ -35,7 +33,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON no seguinte formato (sem marcações de markdown adicionais):
+        Retorne ESTRITAMENTE um JSON no seguinte formato:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Média",
@@ -44,17 +42,31 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # Modelos atualizados da SDK google-genai em ordem de prioridade
-        modelos_testar = [
-            'gemini-2.5-flash',
-            'gemini-2.0-flash',
-            'gemini-1.5-flash'
-        ]
+        # 3. Descobre dinamicamente os modelos ativos na sua chave de API
+        modelos_disponiveis = []
+        try:
+            for m in client.models.list():
+                # Filtra apenas modelos que suportam generateContent
+                if hasattr(m, 'supported_actions') and 'generateContent' in m.supported_actions:
+                    nome_limpo = m.name.replace("models/", "")
+                    modelos_disponiveis.append(nome_limpo)
+        except Exception:
+            pass
+
+        # Lista de fallback caso a listagem dinâmica falhe
+        if not modelos_disponiveis:
+            modelos_disponiveis = [
+                'gemini-2.5-flash',
+                'gemini-2.0-flash'
+            ]
 
         response = None
         ultimo_erro = None
 
-        for modelo_nome in modelos_testar:
+        for modelo_nome in modelos_disponiveis:
+            # Pula modelos experimentais ou de embeddings se existirem na lista
+            if "embedding" in modelo_nome or "imagen" in modelo_nome:
+                continue
             try:
                 response = client.models.generate_content(
                     model=modelo_nome,
@@ -67,11 +79,11 @@ def analisar_imagem_com_gemini(imagem_upload):
                 continue
 
         if not response or not response.text:
-            raise Exception(f"Nenhum modelo respondeu. Último erro: {ultimo_erro}")
+            raise Exception(f"Nenhum modelo disponível respondeu. Detalhe: {ultimo_erro}")
 
         texto_resultado = response.text.strip()
 
-        # Limpa blocos markdown de código
+        # Limpa blocos de formatação markdown caso a IA inclua ```json ... ```
         if texto_resultado.startswith("```"):
             lines = texto_resultado.splitlines()
             if lines[0].startswith("```"):
