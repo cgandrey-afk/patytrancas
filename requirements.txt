@@ -1,4 +1,4 @@
 streamlit
 pillow
-google-generativeai
+google-genai
 firebase-admin

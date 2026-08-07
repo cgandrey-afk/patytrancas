@@ -1,6 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from google import genai
 from PIL import Image
 import json
 import io
@@ -18,16 +17,17 @@ def formatar_tempo(minutos):
 def analisar_imagem_com_gemini(imagem_upload):
     """Envia a imagem para a API Gemini e retorna a estimativa de tempo e complexidade."""
     try:
-        # 1. Recupera e configura a chave da API
+        # 1. Recupera a chave salva nas Secrets do Streamlit Cloud
         api_key = st.secrets["gemini"]["api_key"]
-        genai.configure(api_key=api_key)
+        
+        # Cria o cliente usando o novo SDK oficial
+        client = genai.Client(api_key=api_key)
         
         # 2. Processa a imagem para garantir compatibilidade
         imagem_upload.seek(0)
         bytes_imagem = imagem_upload.read()
         imagem_pil = Image.open(io.BytesIO(bytes_imagem))
         
-        # Converte para RGB se for RGBA/PNG transparente
         if imagem_pil.mode in ("RGBA", "P"):
             imagem_pil = imagem_pil.convert("RGB")
         
@@ -35,7 +35,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON com esta estrutura (sem marcações markdown adicionais fora do JSON):
+        Retorne ESTRITAMENTE um JSON no seguinte formato (sem marcações de markdown adicionais):
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Média",
@@ -44,49 +44,18 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # 3. Modelos vigentes na API do Google Gemini
-        modelos_tentativa = [
-            'gemini-2.5-flash',
-            'gemini-2.0-flash',
-            'gemini-1.5-flash-latest',
-            'gemini-1.5-flash'
-        ]
+        # 3. Chamada direta usando a nova SDK
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=[prompt, imagem_pil]
+        )
 
-        safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }
+        if not response or not response.text:
+            raise Exception("A API respondeu com conteúdo vazio.")
 
-        texto_resultado = None
-        ultimo_erro = None
+        texto_resultado = response.text.strip()
 
-        for nome_modelo in modelos_tentativa:
-            try:
-                model = genai.GenerativeModel(model_name=nome_modelo)
-                response = model.generate_content(
-                    [prompt, imagem_pil],
-                    safety_settings=safety_settings
-                )
-                
-                if response and hasattr(response, 'text') and response.text and response.text.strip():
-                    texto_resultado = response.text.strip()
-                    break
-                elif response and response.candidates:
-                    cand = response.candidates[0]
-                    if cand.content and cand.content.parts:
-                        texto_resultado = cand.content.parts[0].text.strip()
-                        if texto_resultado:
-                            break
-            except Exception as err:
-                ultimo_erro = err
-                continue
-
-        if not texto_resultado:
-            raise Exception(f"Erro ao conectar aos modelos do Gemini. Última tentativa: {ultimo_erro}")
-
-        # Limpa blocos markdown no caso de ```json ... ```
+        # Limpa eventuais blocos de markdown
         if texto_resultado.startswith("```"):
             lines = texto_resultado.splitlines()
             if lines[0].startswith("```"):
