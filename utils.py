@@ -30,29 +30,33 @@ def analisar_imagem_com_gemini(imagem_upload):
             imagem_pil = imagem_pil.convert("RGB")
         
         prompt = """
-        Você é uma trancista profissional especialista em penteados e tranças afro/nagô.
-        Analise a imagem enviada e estime a complexidade e o tempo com base estrita nas regras abaixo:
+        Você é uma trancista profissional e especialista em penteados afro e nagô.
+        Analise a imagem enviada para estimar a complexidade e o TEMPO REAL de execução do trabalho.
 
-        REGRAS DE ESTIMATIVA DE TEMPO:
-        1. QUANTIDADE DE TRANÇAS:
-           - Tranças topo/laterais simples ou poucas tranças (1 a 3 tranças): ~1h a 1h30min.
-           - Até 5 tranças nagô simples: em média 1h30min a 2h.
-           - Cabeça toda ou mais de 6 tranças: 3h a 5h+ (dependendo do comprimento/espessura).
+        REGRAS RÍGIDAS DE ESTIMATIVA DE TEMPO (MÁXIMOS E MÍNIMOS):
 
-        2. TIPO E TEXTURA DO CABELO:
-           - Cabelo liso ou levemente ondulado: processo mais rápido (reduzir levemente a estimativa).
-           - Cabelo muito crespo, volumoso ou afro curto: exige mais preparação/divisão (manter ou aumentar estimativa).
+        1. COBERTURA DA CABEÇA (CRITÉRIO PRINCIPAL):
+           - TRANÇA PARCIAL / LATERAL / TIARA (Como na foto, cobrindo apenas uma lateral ou topo do cabelo, deixando o restante solto):
+             -> Cabelo Liso/Ondulado: Duração MÁXIMA de 60 a 90 minutos (1h a 1h30min).
+             -> Cabelo Crespo/Afro: Duração de 90 a 120 minutos (1h30min a 2h).
+           - MEIA CABEÇA (Nagô até a metade):
+             -> 1h30min a 2h30min.
+           - CABEÇA TODA (Nagô completa, Fulani Braids completas ou Box Braids):
+             -> 3h a 6h+.
 
-        3. DESENHO E ACESSÓRIOS:
-           - Divisões retas e tradicionais: mais rápido.
-           - Desenhos com curvas, ondas, formato coração/geométrico ou aplicação de linhas/acessórios: adicionar tempo pela precisão requerida.
+        2. INFLUÊNCIA DA TEXTURA DO CABELO:
+           - Cabelo liso/ondulado visualizado: Reduza a estimativa. O manuseio e a divisão são mais rápidos.
+           - Cabelo crespo/afro volumoso: Exige mais alinhamento e pomada, mantendo o tempo padrão.
 
-        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem marcações markdown adicionais):
+        3. DETALHES (DESENHOS E ACESSÓRIOS):
+           - Curvas, fitas e anéis em tranças PARCIAIS aumentam a complexidade, mas NÃO devem fazer o tempo total ultrapassar 90 a 105 minutos se for apenas uma lateral.
+
+        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem formatação markdown adicionais):
         {
-          "estilo_identificado": "Nome do modelo de trança identificado (ex: Nagô Lateral com Desenho Onda)",
-          "dificuldade": "Baixa" ou "Média" ou "Alta",
+          "estilo_identificado": "Nagô Lateral Ondulada com Acessórios",
+          "dificuldade": "Média",
           "tempo_estimado_minutos": 90,
-          "observacao": "Explicação curta considerando a quantidade de tranças, textura do cabelo visualizada e curvas do desenho."
+          "observacao": "Explicação objetiva justificando o tempo com base no fato de ser apenas uma lateral/penteado parcial em cabelo liso."
         }
         """
 
