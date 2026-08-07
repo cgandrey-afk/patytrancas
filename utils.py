@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 import json
-import re
 
 def formatar_tempo(minutos):
     """Formata minutos no formato legível de horas e minutos."""
@@ -28,7 +27,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um objeto JSON válido, sem texto explicativo adicional fora dele:
+        Retorne um JSON com a seguinte estrutura:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Baixa",
@@ -51,16 +50,23 @@ def analisar_imagem_com_gemini(imagem_upload):
                 'models/gemini-1.5-flash-latest',
                 'models/gemini-1.5-flash',
                 'models/gemini-1.5-pro-latest',
-                'models/gemini-1.5-pro',
-                'models/gemini-pro'
+                'models/gemini-1.5-pro'
             ]
 
         response = None
         ultimo_erro = None
 
+        # Passamos a configuração para a API retornar estritamente JSON puro
+        generation_config = genai.GenerationConfig(
+            response_mime_type="application/json"
+        )
+
         for nome_modelo in modelos_disponiveis:
             try:
-                model = genai.GenerativeModel(nome_modelo)
+                model = genai.GenerativeModel(
+                    model_name=nome_modelo,
+                    generation_config=generation_config
+                )
                 response = model.generate_content([prompt, imagem])
                 if response and response.text:
                     break
@@ -71,16 +77,9 @@ def analisar_imagem_com_gemini(imagem_upload):
         if not response or not response.text:
             raise Exception(f"Nenhum modelo retornou resposta válida. Erro: {ultimo_erro}")
 
-        raw_text = response.text.strip()
-
-        # Extrai estritamente o bloco contido entre { e }
-        match = re.search(r'\{.*\}', raw_text, re.DOTALL)
-        if match:
-            json_str = match.group(0)
-            dados = json.loads(json_str)
-            return dados
-        else:
-            raise Exception(f"A IA não retornou uma estrutura JSON válida. Resposta recebida: {raw_text}")
+        # Como forçamos o response_mime_type em JSON, o response.text já vem 100% limpo
+        dados = json.loads(response.text.strip())
+        return dados
         
     except Exception as e:
         st.error(f"Erro ao analisar imagem com IA: {e}")
