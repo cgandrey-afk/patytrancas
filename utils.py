@@ -31,32 +31,34 @@ def analisar_imagem_com_gemini(imagem_upload):
         
         prompt = """
         Você é uma trancista profissional e especialista em penteados afro e nagô.
-        Analise a imagem enviada para estimar a complexidade e o TEMPO REAL de execução do trabalho.
+        Analise a imagem enviada e estime a complexidade e o TEMPO REAL com base na tabela e nas regras abaixo:
 
-        REGRAS RÍGIDAS DE ESTIMATIVA DE TEMPO (MÁXIMOS E MÍNIMOS):
+        TABELA DE REFERÊNCIA DE TEMPO E COMPLEXIDADE:
 
-        1. COBERTURA DA CABEÇA (CRITÉRIO PRINCIPAL):
-           - TRANÇA PARCIAL / LATERAL / TIARA (Como na foto, cobrindo apenas uma lateral ou topo do cabelo, deixando o restante solto):
-             -> Cabelo Liso/Ondulado: Duração MÁXIMA de 60 a 90 minutos (1h a 1h30min).
-             -> Cabelo Crespo/Afro: Duração de 90 a 120 minutos (1h30min a 2h).
-           - MEIA CABEÇA (Nagô até a metade):
-             -> 1h30min a 2h30min.
-           - CABEÇA TODA (Nagô completa, Fulani Braids completas ou Box Braids):
-             -> 3h a 6h+.
+        1. DESENHO E COMPLEXIDADE DO TOPO/LATERAL:
+           - TRANÇAS SIMPLES OU RETAS (Laterais ou Tiara):
+             * Cabelo Liso/Ondulado: 60 a 90 minutos (1h a 1h30min).
+             * Cabelo Cacheado/Crespo: 90 a 120 minutos (1h30min a 2h).
 
-        2. INFLUÊNCIA DA TEXTURA DO CABELO:
-           - Cabelo liso/ondulado visualizado: Reduza a estimativa. O manuseio e a divisão são mais rápidos.
-           - Cabelo crespo/afro volumoso: Exige mais alinhamento e pomada, mantendo o tempo padrão.
+           - DESENHOS DE ALTA PRECISÃO, GEOMÉTRICOS OU SIMÉTRICOS (Ex: Formato de Coração, Cruzados/X, Borboleta, Tiara trabalhada com curvas e acessórios no topo):
+             * Exige divisão minuciosa e alinhamento preciso dos fios.
+             * Cabelo Liso/Ondulado: 120 a 150 minutos (2h a 2h30min).
+             * Cabelo Cacheado/Crespo/Afro: 150 a 180 minutos (2h30min a 3h).
 
-        3. DETALHES (DESENHOS E ACESSÓRIOS):
-           - Curvas, fitas e anéis em tranças PARCIAIS aumentam a complexidade, mas NÃO devem fazer o tempo total ultrapassar 90 a 105 minutos se for apenas uma lateral.
+        2. PENTEADOS COMPLETOS / CABEÇA TODA:
+           - Meia cabeça (Nagô até a metade): 2h a 3h.
+           - Cabeça toda (Nagô completa / Fulani / Box Braids): 3h a 6h+.
 
-        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem formatação markdown adicionais):
+        3. AVALIAÇÃO VISUAL OBRIGATÓRIA DA IMAGEM:
+           - Observe a curvatura do cabelo nas raízes e pontas (Liso vs. Cacheado/Crespo).
+           - Identifique se há desenhos elaborados (corações, cruzamentos, formas geométricas) que exigem simetria rigorosa.
+
+        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem marcações markdown adicionais):
         {
-          "estilo_identificado": "Nagô Lateral Ondulada com Acessórios",
-          "dificuldade": "Média",
-          "tempo_estimado_minutos": 90,
-          "observacao": "Explicação objetiva justificando o tempo com base no fato de ser apenas uma lateral/penteado parcial em cabelo liso."
+          "estilo_identificado": "Nagô Topo com Desenho Geométrico/Coração e Acessórios",
+          "dificuldade": "Alta",
+          "tempo_estimado_minutos": 180,
+          "observacao": "Explicação detalhada destacando a complexidade do desenho simétrico/cruzado no topo e a textura do cabelo."
         }
         """
 
