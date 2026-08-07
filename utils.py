@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 import json
+import re
 
 def formatar_tempo(minutos):
     """Formata minutos no formato legível de horas e minutos."""
@@ -27,7 +28,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON no seguinte formato:
+        Retorne ESTRITAMENTE um objeto JSON válido, sem texto explicativo adicional fora dele:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Baixa",
@@ -45,7 +46,6 @@ def analisar_imagem_com_gemini(imagem_upload):
         except Exception:
             pass
 
-        # Lista de fallback caso a busca dinâmica falhe
         if not modelos_disponiveis:
             modelos_disponiveis = [
                 'models/gemini-1.5-flash-latest',
@@ -58,7 +58,6 @@ def analisar_imagem_com_gemini(imagem_upload):
         response = None
         ultimo_erro = None
 
-        # Testa os modelos que realmente existem na sua conta
         for nome_modelo in modelos_disponiveis:
             try:
                 model = genai.GenerativeModel(nome_modelo)
@@ -70,19 +69,18 @@ def analisar_imagem_com_gemini(imagem_upload):
                 continue
 
         if not response or not response.text:
-            raise Exception(f"Nenhum modelo respondeu. Modelos testados: {modelos_disponiveis}. Erro: {ultimo_erro}")
+            raise Exception(f"Nenhum modelo retornou resposta válida. Erro: {ultimo_erro}")
 
-        texto_limpo = response.text.strip()
-        if texto_limpo.startswith("```"):
-            lines = texto_limpo.splitlines()
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].startswith("```"):
-                lines = lines[:-1]
-            texto_limpo = "\n".join(lines).strip()
+        raw_text = response.text.strip()
 
-        dados = json.loads(texto_limpo)
-        return dados
+        # Extrai estritamente o bloco contido entre { e }
+        match = re.search(r'\{.*\}', raw_text, re.DOTALL)
+        if match:
+            json_str = match.group(0)
+            dados = json.loads(json_str)
+            return dados
+        else:
+            raise Exception(f"A IA não retornou uma estrutura JSON válida. Resposta recebida: {raw_text}")
         
     except Exception as e:
         st.error(f"Erro ao analisar imagem com IA: {e}")
