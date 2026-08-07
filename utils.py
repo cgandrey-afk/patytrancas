@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from PIL import Image
 import json
 import io
@@ -21,7 +22,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         api_key = st.secrets["gemini"]["api_key"]
         genai.configure(api_key=api_key)
         
-        # 2. Garante que o ponteiro do arquivo enviado esteja no início (resolve leitura de 0 bytes)
+        # 2. Reseta o ponteiro e lê os bytes da imagem
         imagem_upload.seek(0)
         bytes_imagem = imagem_upload.read()
         imagem_pil = Image.open(io.BytesIO(bytes_imagem))
@@ -30,7 +31,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON com esta estrutura exata (sem formatação markdown como ```json):
+        Retorne ESTRITAMENTE um JSON no formato abaixo, sem nenhum texto antes ou depois:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Média",
@@ -39,7 +40,26 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # 3. Modelos suportados organizados por prioridade
+        # 3. Desativa filtros de bloqueio indevidos para fotos de rostos/cabelo
+        safety_settings = [
+            {
+                "category": HarmCategory.HARM_CATEGORY_HARASSMENT,
+                "threshold": HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+                "category": HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                "threshold": HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+                "category": HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                "threshold": HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+                "category": HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                "threshold": HarmBlockThreshold.BLOCK_NONE,
+            },
+        ]
+
         modelos_tentativa = [
             'gemini-1.5-flash',
             'models/gemini-1.5-flash',
@@ -47,39 +67,34 @@ def analisar_imagem_com_gemini(imagem_upload):
             'models/gemini-1.5-pro'
         ]
 
-        # Configuração para requerer JSON nativo
-        generation_config = {
-            "response_mime_type": "application/json"
-        }
-
-        response = None
+        texto_resultado = None
         ultimo_erro = None
 
         for nome_modelo in modelos_tentativa:
             try:
-                model = genai.GenerativeModel(
-                    model_name=nome_modelo,
-                    generation_config=generation_config
+                model = genai.GenerativeModel(model_name=nome_modelo)
+                response = model.generate_content(
+                    [prompt, imagem_pil],
+                    safety_settings=safety_settings
                 )
-                response = model.generate_content([prompt, imagem_pil])
                 
-                # Se obtivemos uma resposta válida com candidato
-                if response and response.candidates and len(response.candidates) > 0:
+                # Tenta capturar o texto direto dos candidatos
+                if response and response.candidates:
                     cand = response.candidates[0]
-                    # Verifica se o motivo de finalização foi STOP (sucesso)
                     if cand.content and cand.content.parts:
-                        break
+                        texto_resultado = cand.content.parts[0].text
+                        if texto_resultado and texto_resultado.strip():
+                            break
             except Exception as err:
                 ultimo_erro = err
                 continue
 
-        # 4. Extração e validação do texto retornado
-        if not response or not response.text or not response.text.strip():
-            raise Exception("A IA não gerou conteúdo para esta imagem. Tente enviar outra foto com melhor iluminação.")
+        if not texto_resultado or not texto_resultado.strip():
+            raise Exception(f"A API respondeu sem conteúdo. Verifique a imagem ou tente outra foto. Detalhes: {ultimo_erro}")
 
-        texto_limpo = response.text.strip()
+        texto_limpo = texto_resultado.strip()
         
-        # Remove eventuais blocos de código markdown se houver
+        # Limpa marcadores de código caso o Gemini envie ```json ... ```
         if texto_limpo.startswith("```"):
             lines = texto_limpo.splitlines()
             if lines[0].startswith("```"):
