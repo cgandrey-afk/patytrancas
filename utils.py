@@ -30,15 +30,29 @@ def analisar_imagem_com_gemini(imagem_upload):
             imagem_pil = imagem_pil.convert("RGB")
         
         prompt = """
-        Você é um especialista em penteados e tranças afro.
-        Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
-        
-        Retorne ESTRITAMENTE um JSON no seguinte formato:
+        Você é uma trancista profissional especialista em penteados e tranças afro/nagô.
+        Analise a imagem enviada e estime a complexidade e o tempo com base estrita nas regras abaixo:
+
+        REGRAS DE ESTIMATIVA DE TEMPO:
+        1. QUANTIDADE DE TRANÇAS:
+           - Tranças topo/laterais simples ou poucas tranças (1 a 3 tranças): ~1h a 1h30min.
+           - Até 5 tranças nagô simples: em média 1h30min a 2h.
+           - Cabeça toda ou mais de 6 tranças: 3h a 5h+ (dependendo do comprimento/espessura).
+
+        2. TIPO E TEXTURA DO CABELO:
+           - Cabelo liso ou levemente ondulado: processo mais rápido (reduzir levemente a estimativa).
+           - Cabelo muito crespo, volumoso ou afro curto: exige mais preparação/divisão (manter ou aumentar estimativa).
+
+        3. DESENHO E ACESSÓRIOS:
+           - Divisões retas e tradicionais: mais rápido.
+           - Desenhos com curvas, ondas, formato coração/geométrico ou aplicação de linhas/acessórios: adicionar tempo pela precisão requerida.
+
+        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem marcações markdown adicionais):
         {
-          "estilo_identificado": "Nome do modelo de trança identificado",
-          "dificuldade": "Média",
-          "tempo_estimado_minutos": 180,
-          "observacao": "Uma breve explicação sobre a densidade ou tamanho que influenciou o tempo estimado."
+          "estilo_identificado": "Nome do modelo de trança identificado (ex: Nagô Lateral com Desenho Onda)",
+          "dificuldade": "Baixa" ou "Média" ou "Alta",
+          "tempo_estimado_minutos": 90,
+          "observacao": "Explicação curta considerando a quantidade de tranças, textura do cabelo visualizada e curvas do desenho."
         }
         """
 
