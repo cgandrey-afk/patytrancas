@@ -36,12 +36,41 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # Usando o identificador padronizado e ativo da API
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content([prompt, imagem])
+        # Busca dinamicamente na API do Google quais modelos suportam geração de conteúdo
+        modelos_disponiveis = []
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    modelos_disponiveis.append(m.name)
+        except Exception:
+            pass
+
+        # Lista de fallback caso a busca dinâmica falhe
+        if not modelos_disponiveis:
+            modelos_disponiveis = [
+                'models/gemini-1.5-flash-latest',
+                'models/gemini-1.5-flash',
+                'models/gemini-1.5-pro-latest',
+                'models/gemini-1.5-pro',
+                'models/gemini-pro'
+            ]
+
+        response = None
+        ultimo_erro = None
+
+        # Testa os modelos que realmente existem na sua conta
+        for nome_modelo in modelos_disponiveis:
+            try:
+                model = genai.GenerativeModel(nome_modelo)
+                response = model.generate_content([prompt, imagem])
+                if response and response.text:
+                    break
+            except Exception as err:
+                ultimo_erro = err
+                continue
 
         if not response or not response.text:
-            raise Exception("O modelo não retornou nenhuma resposta.")
+            raise Exception(f"Nenhum modelo respondeu. Modelos testados: {modelos_disponiveis}. Erro: {ultimo_erro}")
 
         texto_limpo = response.text.strip()
         if texto_limpo.startswith("```"):
