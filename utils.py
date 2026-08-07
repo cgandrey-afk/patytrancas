@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from PIL import Image
 import json
 
@@ -27,16 +28,29 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne um JSON com a seguinte estrutura:
+        Retorne ESTRITAMENTE um JSON com esta estrutura (sem formatação markdown adicionais fora do json):
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
-          "dificuldade": "Baixa",
+          "dificuldade": "Média",
           "tempo_estimado_minutos": 180,
           "observacao": "Uma breve explicação sobre a densidade ou tamanho que influenciou o tempo estimado."
         }
         """
 
-        # Busca dinamicamente na API do Google quais modelos suportam geração de conteúdo
+        # Configurações para garantir retorno puro em JSON
+        generation_config = genai.GenerationConfig(
+            response_mime_type="application/json"
+        )
+
+        # Configurações para evitar bloqueio indevido por filtros de imagem
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+
+        # Busca dinamicamente os modelos disponíveis
         modelos_disponiveis = []
         try:
             for m in genai.list_models():
@@ -56,29 +70,27 @@ def analisar_imagem_com_gemini(imagem_upload):
         response = None
         ultimo_erro = None
 
-        # Passamos a configuração para a API retornar estritamente JSON puro
-        generation_config = genai.GenerationConfig(
-            response_mime_type="application/json"
-        )
-
         for nome_modelo in modelos_disponiveis:
             try:
                 model = genai.GenerativeModel(
                     model_name=nome_modelo,
-                    generation_config=generation_config
+                    generation_config=generation_config,
+                    safety_settings=safety_settings
                 )
                 response = model.generate_content([prompt, imagem])
-                if response and response.text:
+                
+                # Verifica se o modelo retornou algum texto de fato
+                if response and hasattr(response, 'text') and response.text and response.text.strip():
                     break
             except Exception as err:
                 ultimo_erro = err
                 continue
 
-        if not response or not response.text:
-            raise Exception(f"Nenhum modelo retornou resposta válida. Erro: {ultimo_erro}")
+        if not response or not hasattr(response, 'text') or not response.text or not response.text.strip():
+            raise Exception(f"A API do Gemini retornou uma resposta vazia. (Erro/Filtro: {ultimo_erro})")
 
-        # Como forçamos o response_mime_type em JSON, o response.text já vem 100% limpo
-        dados = json.loads(response.text.strip())
+        texto_resposta = response.text.strip()
+        dados = json.loads(texto_resposta)
         return dados
         
     except Exception as e:
