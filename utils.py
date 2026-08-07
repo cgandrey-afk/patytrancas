@@ -27,7 +27,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON sem formatação markdown no seguinte formato:
+        Retorne ESTRITAMENTE um JSON no seguinte formato:
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Baixa",
@@ -36,31 +36,13 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # Lista de modelos em ordem de preferência (usando a nomenclatura padrão da API)
-        modelos_para_testar = [
-            'gemini-2.5-flash',
-            'gemini-1.5-flash',
-            'models/gemini-1.5-flash',
-            'models/gemini-2.5-flash'
-        ]
-        
-        response = None
-        erro_ultimo = None
-
-        for modelo_nome in modelos_para_testar:
-            try:
-                model = genai.GenerativeModel(modelo_nome)
-                response = model.generate_content([prompt, imagem])
-                if response and response.text:
-                    break
-            except Exception as e:
-                erro_ultimo = e
-                continue
+        # Usando o identificador padronizado e ativo da API
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content([prompt, imagem])
 
         if not response or not response.text:
-            raise Exception(f"Nenhum modelo respondeu com sucesso. Último erro: {erro_ultimo}")
+            raise Exception("O modelo não retornou nenhuma resposta.")
 
-        # Limpa marcadores de código Markdown caso a IA devolva ```json ... ```
         texto_limpo = response.text.strip()
         if texto_limpo.startswith("```"):
             lines = texto_limpo.splitlines()
