@@ -1,8 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from PIL import Image
 import json
+import io
 
 def formatar_tempo(minutos):
     """Formata minutos no formato legível de horas e minutos."""
@@ -17,18 +17,20 @@ def formatar_tempo(minutos):
 def analisar_imagem_com_gemini(imagem_upload):
     """Envia a imagem para a API Gemini e retorna a estimativa de tempo e complexidade."""
     try:
-        # Recupera a chave salva nas Secrets do Streamlit Cloud
+        # 1. Configura a chave de API
         api_key = st.secrets["gemini"]["api_key"]
         genai.configure(api_key=api_key)
         
-        # Carrega a imagem enviada
-        imagem = Image.open(imagem_upload)
+        # 2. Garante que o ponteiro do arquivo enviado esteja no início (resolve leitura de 0 bytes)
+        imagem_upload.seek(0)
+        bytes_imagem = imagem_upload.read()
+        imagem_pil = Image.open(io.BytesIO(bytes_imagem))
         
         prompt = """
         Você é um especialista em penteados e tranças afro.
         Analise a imagem enviada e estime a complexidade e o tempo necessário para executar o penteado.
         
-        Retorne ESTRITAMENTE um JSON com esta estrutura (sem formatação markdown adicionais fora do json):
+        Retorne ESTRITAMENTE um JSON com esta estrutura exata (sem formatação markdown como ```json):
         {
           "estilo_identificado": "Nome do modelo de trança identificado",
           "dificuldade": "Média",
@@ -37,60 +39,56 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # Configurações para garantir retorno puro em JSON
-        generation_config = genai.GenerationConfig(
-            response_mime_type="application/json"
-        )
+        # 3. Modelos suportados organizados por prioridade
+        modelos_tentativa = [
+            'gemini-1.5-flash',
+            'models/gemini-1.5-flash',
+            'gemini-1.5-pro',
+            'models/gemini-1.5-pro'
+        ]
 
-        # Configurações para evitar bloqueio indevido por filtros de imagem
-        safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        # Configuração para requerer JSON nativo
+        generation_config = {
+            "response_mime_type": "application/json"
         }
-
-        # Busca dinamicamente os modelos disponíveis
-        modelos_disponiveis = []
-        try:
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    modelos_disponiveis.append(m.name)
-        except Exception:
-            pass
-
-        if not modelos_disponiveis:
-            modelos_disponiveis = [
-                'models/gemini-1.5-flash-latest',
-                'models/gemini-1.5-flash',
-                'models/gemini-1.5-pro-latest',
-                'models/gemini-1.5-pro'
-            ]
 
         response = None
         ultimo_erro = None
 
-        for nome_modelo in modelos_disponiveis:
+        for nome_modelo in modelos_tentativa:
             try:
                 model = genai.GenerativeModel(
                     model_name=nome_modelo,
-                    generation_config=generation_config,
-                    safety_settings=safety_settings
+                    generation_config=generation_config
                 )
-                response = model.generate_content([prompt, imagem])
+                response = model.generate_content([prompt, imagem_pil])
                 
-                # Verifica se o modelo retornou algum texto de fato
-                if response and hasattr(response, 'text') and response.text and response.text.strip():
-                    break
+                # Se obtivemos uma resposta válida com candidato
+                if response and response.candidates and len(response.candidates) > 0:
+                    cand = response.candidates[0]
+                    # Verifica se o motivo de finalização foi STOP (sucesso)
+                    if cand.content and cand.content.parts:
+                        break
             except Exception as err:
                 ultimo_erro = err
                 continue
 
-        if not response or not hasattr(response, 'text') or not response.text or not response.text.strip():
-            raise Exception(f"A API do Gemini retornou uma resposta vazia. (Erro/Filtro: {ultimo_erro})")
+        # 4. Extração e validação do texto retornado
+        if not response or not response.text or not response.text.strip():
+            raise Exception("A IA não gerou conteúdo para esta imagem. Tente enviar outra foto com melhor iluminação.")
 
-        texto_resposta = response.text.strip()
-        dados = json.loads(texto_resposta)
+        texto_limpo = response.text.strip()
+        
+        # Remove eventuais blocos de código markdown se houver
+        if texto_limpo.startswith("```"):
+            lines = texto_limpo.splitlines()
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].startswith("```"):
+                lines = lines[:-1]
+            texto_limpo = "\n".join(lines).strip()
+
+        dados = json.loads(texto_limpo)
         return dados
         
     except Exception as e:
