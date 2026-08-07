@@ -20,7 +20,7 @@ def analisar_imagem_com_gemini(imagem_upload):
         # 1. Recupera a chave salva nas Secrets do Streamlit Cloud
         api_key = st.secrets["gemini"]["api_key"]
         
-        # Cria o cliente usando o novo SDK oficial
+        # Cria o cliente usando a nova SDK oficial google-genai
         client = genai.Client(api_key=api_key)
         
         # 2. Processa a imagem para garantir compatibilidade
@@ -44,18 +44,34 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # 3. Chamada direta usando a nova SDK
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=[prompt, imagem_pil]
-        )
+        # Modelos atualizados da SDK google-genai em ordem de prioridade
+        modelos_testar = [
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-1.5-flash'
+        ]
+
+        response = None
+        ultimo_erro = None
+
+        for modelo_nome in modelos_testar:
+            try:
+                response = client.models.generate_content(
+                    model=modelo_nome,
+                    contents=[prompt, imagem_pil]
+                )
+                if response and response.text and response.text.strip():
+                    break
+            except Exception as err:
+                ultimo_erro = err
+                continue
 
         if not response or not response.text:
-            raise Exception("A API respondeu com conteúdo vazio.")
+            raise Exception(f"Nenhum modelo respondeu. Último erro: {ultimo_erro}")
 
         texto_resultado = response.text.strip()
 
-        # Limpa eventuais blocos de markdown
+        # Limpa blocos markdown de código
         if texto_resultado.startswith("```"):
             lines = texto_resultado.splitlines()
             if lines[0].startswith("```"):
