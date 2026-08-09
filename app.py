@@ -8,9 +8,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Padronizado para Botões em 2 Linhas (Ícone + Nome)
+# 2. CSS Customizado Com Espaçamento Superior Reduzido
 st.markdown("""
     <style>
+    /* 1. ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO DO STREAMLIT */
+    .stAppViewMainTarget {
+        padding-top: 0rem !important;
+    }
+    .stMainBlockContainer, 
+    div[data-testid="stAppViewBlockContainer"] {
+        padding-top: 1rem !important; /* Puxa tudo para cima */
+        padding-bottom: 1rem !important;
+    }
+
     /* Estilização Geral do Fundo */
     .stApp {
         background: linear-gradient(135deg, #fdf7f9 0%, #f7e8ed 100%);
@@ -21,21 +31,26 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Banner / Header Principal */
+    /* Banner / Header Principal Ultra Compacto no Topo */
     .top-header {
         text-align: center;
-        padding: 5px 0 10px 0;
+        padding: 0px 0 8px 0 !important;
+        margin-top: -10px !important;
     }
     .top-header h1 {
         background: linear-gradient(45deg, #e05297, #9b51e0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 700;
-        margin-bottom: 2px;
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+        line-height: 1.1 !important;
     }
     .top-header p {
         color: #7d6b7d;
         font-style: italic;
+        margin-top: 2px !important;
+        margin-bottom: 5px !important;
     }
 
     /* ESTILO PADRÃO DOS BOTÕES (DESKTOP E TABLET) */
@@ -45,14 +60,14 @@ st.markdown("""
         color: #e05297;
         border: 2px solid #f2c4ce;
         border-radius: 16px;
-        padding: 8px 5px;
+        padding: 6px 5px;
         font-weight: 600;
         font-size: 0.85rem;
         transition: all 0.3s ease;
         box-shadow: 0px 4px 8px rgba(224, 82, 151, 0.08);
         text-align: center !important;
         line-height: 1.2 !important;
-        white-space: pre-wrap !important; /* Permite a quebra de linha do \n de forma perfeita */
+        white-space: pre-wrap !important;
     }
 
     div.stButton > button:hover {
@@ -64,20 +79,25 @@ st.markdown("""
 
     .content-card {
         background-color: #ffffff;
-        padding: 20px;
+        padding: 18px;
         border-radius: 18px;
         box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.04);
         border: 1px solid #fce4ec;
-        margin-top: 10px;
+        margin-top: 5px;
     }
 
     /* --- AJUSTE RESPONSIVO PARA CELULAR --- */
     @media screen and (max-width: 768px) {
+        .stMainBlockContainer, 
+        div[data-testid="stAppViewBlockContainer"] {
+            padding-top: 0.5rem !important; /* Mais próximo do topo no celular */
+        }
+
         .top-header h1 {
-            font-size: 1.4rem !important;
+            font-size: 1.3rem !important;
         }
         .top-header p {
-            font-size: 0.75rem !important;
+            font-size: 0.72rem !important;
         }
 
         /* Encaixa o container exatamente em 100% sem rolagem */
@@ -107,13 +127,13 @@ st.markdown("""
             width: 100% !important;
         }
         div.stButton > button {
-            padding: 6px 2px !important;
+            padding: 5px 2px !important;
             font-size: 0.65rem !important;
             font-weight: 700 !important;
             border-radius: 12px !important;
             border-width: 1px !important;
             height: auto !important;
-            min-height: 42px !important;
+            min-height: 40px !important;
         }
     }
     </style>
@@ -131,7 +151,7 @@ st.markdown("""
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# 5. Menu Superior (Todos os botões rigorosamente padronizados com Ícone acima do Nome)
+# 5. Menu Superior Padronizado
 col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
@@ -154,7 +174,7 @@ with col5:
     if st.button("🔒\nAdmin", use_container_width=True):
         st.session_state["pagina_atual"] = "🔒 Área Administrativa"
 
-st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
 # 6. Renderização das Páginas
 pagina = st.session_state["pagina_atual"]
