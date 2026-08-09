@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Com Tranças de Múltiplos Arcos Sobrepostos (((())))
+# 2. CSS Customizado Com Trança Contínua e Arcos Duplos
 st.markdown("""
     <style>
     /* ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO */
@@ -21,12 +21,12 @@ st.markdown("""
         padding-bottom: 1rem !important;
     }
 
-    /* 🎨 FUNDO ROSA COM TRANÇAS REALISTAS ENTRELAÇADAS (((()))) */
+    /* 🎨 FUNDO ROSA COM TRANÇAS DEFINIDAS (SEM QUEBRAS E COM ARCOS DUPLOS) */
     .stApp {
         background-color: #fdf5f8;
-        /* SVG com arcos cruzados/sobrepostos formando nós de trança reais na vertical */
-        background-image: url("data:image/svg+xml,%3Csvg width='100' height='120' viewBox='0 0 100 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e05297' stroke-width='1.8' stroke-opacity='0.25' stroke-linecap='round'%3E%3C!-- COLUNA DE TRANÇA REALISTA 1 (ESQUERDA) --%3E%3C!-- Mechas esquerdas e mechas direitas se cruzando no centro --%3E%3Cpath d='M 12 0 C 22 8, 30 18, 25 28 C 20 38, 12 40, 12 50 C 22 58, 30 68, 25 78 C 20 88, 12 90, 12 100' /%3E%3Cpath d='M 18 0 C 28 8, 36 18, 31 28 C 26 38, 18 40, 18 50 C 28 58, 36 68, 31 78 C 26 88, 18 90, 18 100' /%3E%3Cpath d='M 38 0 C 28 8, 20 18, 25 28 C 30 38, 38 40, 38 50 C 28 58, 20 68, 25 78 C 30 88, 38 90, 38 100' /%3E%3Cpath d='M 32 0 C 22 8, 14 18, 19 28 C 24 38, 32 40, 32 50 C 22 58, 14 68, 19 78 C 24 88, 32 90, 32 100' /%3E%3C!-- COLUNA DE TRANÇA REALISTA 2 (DIREITA) --%3E%3Cpath d='M 62 10 C 72 18, 80 28, 75 38 C 70 48, 62 50, 62 60 C 72 68, 80 78, 75 88 C 70 98, 62 100, 62 110' /%3E%3Cpath d='M 68 10 C 78 18, 86 28, 81 38 C 76 48, 68 50, 68 60 C 78 68, 86 78, 81 88 C 76 98, 68 100, 68 110' /%3E%3Cpath d='M 88 10 C 78 18, 70 28, 75 38 C 80 48, 88 50, 88 60 C 78 68, 70 78, 75 88 C 80 98, 88 100, 88 110' /%3E%3Cpath d='M 82 10 C 72 18, 64 28, 69 38 C 74 48, 82 50, 82 60 C 72 68, 64 78, 69 88 C 74 98, 82 100, 82 110' /%3E%3C/g%3E%3C/svg%3E");
-        background-size: 100px 120px;
+        /* SVG de 100x100 para encaixar o ciclo perfeito sem emendas no meio */
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e05297' stroke-width='1.8' stroke-opacity='0.25' stroke-linecap='round'%3E%3C!-- COLUNA 1 (ESQUERDA) - Trança contínua com arcos duplos paralelos --%3E%3Cpath d='M 12 0 C 22 10, 30 20, 25 30 C 20 40, 12 45, 12 50 C 22 60, 30 70, 25 80 C 20 90, 12 95, 12 100' /%3E%3Cpath d='M 15 0 C 25 10, 33 20, 28 30 C 23 40, 15 45, 15 50 C 25 60, 33 70, 28 80 C 23 90, 15 95, 15 100' /%3E%3Cpath d='M 38 0 C 28 10, 20 20, 25 30 C 30 40, 38 45, 38 50 C 28 60, 20 70, 25 80 C 30 90, 38 95, 38 100' /%3E%3Cpath d='M 35 0 C 25 10, 17 20, 22 30 C 27 40, 35 45, 35 50 C 25 60, 17 70, 22 80 C 27 90, 35 95, 35 100' /%3E%3C!-- COLUNA 2 (DIREITA) - Segunda coluna alinhada --%3E%3Cpath d='M 62 0 C 72 10, 80 20, 75 30 C 70 40, 62 45, 62 50 C 72 60, 80 70, 75 80 C 70 90, 62 95, 62 100' /%3E%3Cpath d='M 65 0 C 75 10, 83 20, 78 30 C 73 40, 65 45, 65 50 C 75 60, 83 70, 78 80 C 73 90, 65 95, 65 100' /%3E%3Cpath d='M 88 0 C 78 10, 70 20, 75 30 C 80 40, 88 45, 88 50 C 78 60, 70 70, 75 80 C 80 90, 88 95, 88 100' /%3E%3Cpath d='M 85 0 C 75 10, 67 20, 72 30 C 77 40, 85 45, 85 50 C 75 60, 67 70, 72 80 C 77 90, 85 95, 85 100' /%3E%3C/g%3E%3C/svg%3E");
+        background-size: 100px 100px;
         background-attachment: fixed;
         font-family: 'Poppins', sans-serif;
     }
