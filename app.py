@@ -286,7 +286,7 @@ elif pagina == "🗓️ Agendar":
     agendamento.render(salvar_agendamento_fn=salvar_agendamento)
     
 
-elif pagina == "✨ Estimativa com IA":
+elif pagina == "📸 Trança com IA":
     with st.container(border=True):
         st.markdown('<h3 style="color: #e05297; margin-bottom: 5px;">✨ Estimativa Inteligente de Penteado</h3>', unsafe_allow_html=True)
         st.markdown('<p style="color: #666; font-size: 0.9rem;">Envie uma foto do estilo de trança desejado para nossa IA analisar a complexidade e o tempo estimado de atendimento.</p>', unsafe_allow_html=True)
