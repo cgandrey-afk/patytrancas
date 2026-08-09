@@ -287,7 +287,41 @@ elif pagina == "🗓️ Agendar":
     
 
 elif pagina == "✨ Estimativa com IA":
-    utils.render()
+    with st.container(border=True):
+        st.markdown('<h3 style="color: #e05297; margin-bottom: 5px;">✨ Estimativa Inteligente de Penteado</h3>', unsafe_allow_html=True)
+        st.markdown('<p style="color: #666; font-size: 0.9rem;">Envie uma foto do estilo de trança desejado para nossa IA analisar a complexidade e o tempo estimado de atendimento.</p>', unsafe_allow_html=True)
+        st.divider()
+
+        upload_foto = st.file_uploader(
+            "Envie a imagem do penteado (JPG, JPEG ou PNG):", 
+            type=["jpg", "jpeg", "png"]
+        )
+
+        if upload_foto is not None:
+            col1, col2 = st.columns([1, 1])
+
+            with col1:
+                st.image(upload_foto, caption="Foto enviada", use_container_width=True)
+
+            with col2:
+                btn_analisar = st.button("🔍 Analisar Penteado com IA", use_container_width=True)
+
+                if btn_analisar:
+                    with st.spinner("Analisando complexidade e estimando o tempo..."):
+                        # Chama a função direto do utils.py sem alterar nada nele
+                        resultado = utils.analisar_imagem_com_gemini(upload_foto)
+
+                    if resultado:
+                        st.success("Análise concluída!")
+                        
+                        st.markdown(f"**Estilo Identificado:** {resultado.get('estilo_identificado', 'N/A')}")
+                        st.markdown(f"**Dificuldade:** `{resultado.get('dificuldade', 'N/A')}`")
+                        
+                        tempo_min = resultado.get('tempo_estimado_minutos', 0)
+                        tempo_formatado = utils.formatar_tempo(tempo_min)
+                        st.markdown(f"⏱️ **Tempo Estimado:** `{tempo_formatado}`")
+                        
+                        st.info(f"💡 **Observação da IA:**\n{resultado.get('observacao', '')}")
 
 elif pagina == "🖼️ Meus Trabalhos":
     st.markdown("""
