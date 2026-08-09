@@ -285,12 +285,7 @@ elif pagina == "🗓️ Agendar":
         <div class="content-card">
             <h3 style="color: #e05297; margin-bottom: 5px;">🗓️ Agende seu Horário</h3>
             <p style="color: #666; font-size: 0.9rem;">Preencha os dados abaixo para enviar sua solicitação de agendamento.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.write("")
-
-    with st.form("form_agendamento_cliente"):
+            with st.form("form_agendamento_cliente"):
         col_f1, col_f2 = st.columns(2)
         with col_f1:
             nome_cliente = st.text_input("Seu Nome Completo:")
@@ -320,6 +315,12 @@ elif pagina == "🗓️ Agendar":
             else:
                 salvar_agendamento(nome_cliente, telefone_cliente, servico_escolhido, data_atendimento, horario_atendimento)
                 st.success(f"Obrigado, {nome_cliente}! Seu agendamento foi registrado com sucesso. Entraremos em contato via WhatsApp!")
+        </div>
+    """, unsafe_allow_html=True)
+    
+
+
+    
 
 elif pagina == "📸 Trança com IA":
     st.markdown("""
