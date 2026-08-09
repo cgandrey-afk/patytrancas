@@ -66,7 +66,6 @@ def analisar_imagem_com_gemini(imagem_upload):
         modelos_disponiveis = []
         try:
             for m in client.models.list():
-                # Filtra apenas modelos que suportam generateContent
                 if hasattr(m, 'supported_actions') and 'generateContent' in m.supported_actions:
                     nome_limpo = m.name.replace("models/", "")
                     modelos_disponiveis.append(nome_limpo)
@@ -84,7 +83,6 @@ def analisar_imagem_com_gemini(imagem_upload):
         ultimo_erro = None
 
         for modelo_nome in modelos_disponiveis:
-            # Pula modelos experimentais ou de embeddings se existirem na lista
             if "embedding" in modelo_nome or "imagen" in modelo_nome:
                 continue
             try:
@@ -103,7 +101,7 @@ def analisar_imagem_com_gemini(imagem_upload):
 
         texto_resultado = response.text.strip()
 
-        # Limpa blocos de formatação markdown caso a IA inclua ```json ... ```
+        # Limpa blocos de formatação markdown
         if texto_resultado.startswith("```"):
             lines = texto_resultado.splitlines()
             if lines[0].startswith("```"):
@@ -118,3 +116,40 @@ def analisar_imagem_com_gemini(imagem_upload):
     except Exception as e:
         st.error(f"Erro ao analisar imagem com IA: {e}")
         return None
+
+def render():
+    """Renderiza a interface da Análise com IA no Streamlit."""
+    with st.container(border=True):
+        st.markdown('<h3 style="color: #e05297; margin-bottom: 5px;">✨ Estimativa Inteligente de Penteado</h3>', unsafe_allow_html=True)
+        st.markdown('<p style="color: #666; font-size: 0.9rem;">Envie uma foto do estilo de trança desejado para nossa IA analisar a complexidade e o tempo estimado de atendimento.</p>', unsafe_allow_html=True)
+        st.divider()
+
+        upload_foto = st.file_uploader(
+            "Envie a imagem do penteado (JPG, JPEG ou PNG):", 
+            type=["jpg", "jpeg", "png"]
+        )
+
+        if upload_foto is not None:
+            col1, col2 = st.columns([1, 1])
+
+            with col1:
+                st.image(upload_foto, caption="Foto enviada", use_container_width=True)
+
+            with col2:
+                btn_analisar = st.button("🔍 Analisar Penteado com IA", use_container_width=True)
+
+                if btn_analisar:
+                    with st.spinner("Analisando complexidade e estimando o tempo..."):
+                        resultado = analisar_imagem_com_gemini(upload_foto)
+
+                    if resultado:
+                        st.success("Análise concluída!")
+                        
+                        st.markdown(f"**Estilo Identificado:** {resultado.get('estilo_identificado', 'N/A')}")
+                        st.markdown(f"**Dificuldade:** `{resultado.get('dificuldade', 'N/A')}`")
+                        
+                        tempo_min = resultado.get('tempo_estimado_minutos', 0)
+                        tempo_formatado = formatar_tempo(tempo_min)
+                        st.markdown(f"⏱️ **Tempo Estimado:** `{tempo_formatado}`")
+                        
+                        st.info(f"💡 **Observação da IA:**\n{resultado.get('observacao', '')}")

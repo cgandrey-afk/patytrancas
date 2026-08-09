@@ -5,6 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import agendamento
 import admin
+import utils
 
 # ==========================================
 # 0. INICIALIZAÇÃO E CONEXÃO COM O FIREBASE
@@ -285,13 +286,8 @@ elif pagina == "🗓️ Agendar":
     agendamento.render(salvar_agendamento_fn=salvar_agendamento)
     
 
-elif pagina == "📸 Trança com IA":
-    st.markdown("""
-        <div class="content-card">
-            <h3 style="color: #e05297; margin-bottom: 5px;">📸 Análise com Inteligência Artificial</h3>
-            <p style="color: #666; font-size: 0.9rem;">Envie a foto de inspiração para estipular o tempo exato!</p>
-        </div>
-    """, unsafe_allow_html=True)
+elif pagina == "✨ Estimativa com IA":
+    utils.render()
 
 elif pagina == "🖼️ Meus Trabalhos":
     st.markdown("""
