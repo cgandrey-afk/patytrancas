@@ -3,14 +3,38 @@ import pandas as pd
 from datetime import datetime
 
 def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendamento_fn):
-    # =========================================================
-    # INÍCIO DO BLOCO DE FUNDO BRANCO
-    # =========================================================
+    # -------------------------------------------------------------
+    # FORÇA O FUNDO BRANCO VIA CSS NA PÁGINA DO ADMIN
+    # -------------------------------------------------------------
     st.markdown("""
-        <div class="content-card">
-            <h2 style="color: #e05297; margin-bottom: 5px;">🔒 Área Administrativa</h2>
-            <p style="color: #444; font-size: 0.9rem;">Gerencie os modelos do catálogo, horários de atendimento e solicitações de clientes.</p>
-            <hr style="border: 0.5px solid #f2c4ce; margin: 15px 0;">
+        <style>
+        /* Força a caixa do formulário e o container da página a ficarem com fundo branco */
+        [data-testid="stForm"], 
+        .stMarkdown, 
+        div[data-testid="stVerticalBlock"] > div:has(div.admin-anchor) {
+            background-color: #ffffff !important;
+        }
+        
+        /* Cria um painel branco unificado para todo o conteúdo do Admin */
+        .admin-box {
+            background-color: #ffffff !important;
+            padding: 24px !important;
+            border-radius: 18px !important;
+            box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08) !important;
+            border: 1px solid #f2c4ce !important;
+            margin-bottom: 20px !important;
+        }
+        </style>
+        <div class="admin-anchor"></div>
+    """, unsafe_allow_html=True)
+
+    # Início do bloco com fundo branco
+    st.markdown('<div class="admin-box">', unsafe_allow_html=True)
+
+    st.markdown("""
+        <h2 style="color: #e05297; margin-bottom: 2px;">🔒 Área Administrativa</h2>
+        <p style="color: #444; font-size: 0.9rem;">Gerencie os modelos do catálogo, horários de atendimento e solicitações de clientes.</p>
+        <hr style="border: 0.5px solid #f2c4ce; margin: 12px 0 20px 0;">
     """, unsafe_allow_html=True)
 
     # Controle de Autenticação na Sessão
@@ -148,7 +172,5 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                     })
                     st.success(f"Agenda para {data_trabalho} atualizada com sucesso!")
 
-    # =========================================================
-    # FIM DO BLOCO DE FUNDO BRANCO
-    # =========================================================
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Fechamento do card branco
+    st.markdown('</div>', unsafe_allow_html=True)
