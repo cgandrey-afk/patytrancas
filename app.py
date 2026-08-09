@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Responsivo (Celular vs Computador)
+# 2. CSS Customizado para Telas Pequenas e Ultra Pequenas (Celulares)
 st.markdown("""
     <style>
     /* Estilização Geral do Fundo */
@@ -17,12 +17,11 @@ st.markdown("""
         font-family: 'Poppins', sans-serif;
     }
 
-    /* Esconde cabeçalhos e rodapés nativos */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Header Principal */
+    /* Banner / Header Principal */
     .top-header {
         text-align: center;
         padding: 10px 0;
@@ -39,7 +38,7 @@ st.markdown("""
         font-style: italic;
     }
 
-    /* --- ESTILO PADRÃO DOS BOTÕES (COMPUTADOR) --- */
+    /* --- ESTILO PADRÃO DOS BOTÕES (DESKTOP) --- */
     div.stButton > button {
         width: 100%;
         background-color: #ffffff;
@@ -70,38 +69,51 @@ st.markdown("""
         margin-top: 10px;
     }
 
-    /* --- REGRAS CSS ESPECÍFICAS PARA CELULAR (@media query) --- */
+    /* --- REGRA PARA CELULARES E TELAS MUITO PEQUENAS (Abaixo de 768px) --- */
     @media only screen and (max-width: 768px) {
         .top-header h1 {
-            font-size: 1.8rem !important;
+            font-size: 1.6rem !important;
         }
         .top-header p {
-            font-size: 0.85rem !important;
+            font-size: 0.8rem !important;
         }
         
-        /* Força as colunas do Streamlit a ficarem lado a lado no celular */
+        /* Força a barra de botões a virar um container de rolagem horizontal */
         div[data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             overflow-x: auto !important;
-            gap: 5px !important;
-            padding-bottom: 5px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            gap: 6px !important;
+            padding-bottom: 8px !important;
         }
 
-        /* Garante que cada coluna ocupe espaço igual no celular */
+        /* Oculta a barra de rolagem nativa feia mantendo a função de deslizar */
+        div[data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+            height: 3px;
+        }
+        div[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
+            background: #f2c4ce;
+            border-radius: 10px;
+        }
+
+        /* Garante tamanho proporcional e compacto em telas estreitas */
         div[data-testid="column"] {
             width: auto !important;
             min-width: max-content !important;
-            flex: 1 1 auto !important;
+            flex: 0 0 auto !important;
         }
 
-        /* Reduz tamanho do botão para caber perfeitamente no celular */
+        /* Botões bem compactos para caber na tela pequena */
         div.stButton > button {
-            padding: 6px 8px !important;
-            font-size: 0.75rem !important;
-            border-radius: 14px !important;
+            padding: 5px 10px !important;
+            font-size: 0.72rem !important;
+            border-radius: 12px !important;
             border-width: 1.5px !important;
+            min-height: unset !important;
+            height: auto !important;
         }
 
         .content-card {
@@ -119,11 +131,11 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Controle da Página Atual
+# 4. Controle de Navegação
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# 5. Menu Superior Responsivo (5 Colunas)
+# 5. Menu Superior (5 Colunas)
 col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
@@ -146,7 +158,7 @@ with col5:
     if st.button("🔒 Admin", use_container_width=True):
         st.session_state["pagina_atual"] = "🔒 Área Administrativa"
 
-st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 10px; margin-bottom: 20px;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
 # 6. Renderização de Páginas
 pagina = st.session_state["pagina_atual"]
