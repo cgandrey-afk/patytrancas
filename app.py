@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado para Telas Pequenas e Ultra Pequenas (Celulares)
+# 2. CSS Customizado Forçando Linha Única em Qualquer Tamanho de Tela
 st.markdown("""
     <style>
     /* Estilização Geral do Fundo */
@@ -38,9 +38,9 @@ st.markdown("""
         font-style: italic;
     }
 
-    /* --- ESTILO PADRÃO DOS BOTÕES (DESKTOP) --- */
+    /* ESTILO PADRÃO DOS BOTÕES */
     div.stButton > button {
-        width: 100%;
+        width: 100% !important;
         background-color: #ffffff;
         color: #e05297;
         border: 2px solid #f2c4ce;
@@ -50,7 +50,7 @@ st.markdown("""
         font-size: 0.95rem;
         transition: all 0.3s ease;
         box-shadow: 0px 4px 8px rgba(224, 82, 151, 0.08);
-        white-space: nowrap;
+        white-space: nowrap !important;
     }
 
     div.stButton > button:hover {
@@ -69,16 +69,17 @@ st.markdown("""
         margin-top: 10px;
     }
 
-    /* --- REGRA PARA CELULARES E TELAS MUITO PEQUENAS (Abaixo de 768px) --- */
-    @media only screen and (max-width: 768px) {
+    /* --- SOBRESCRIÇÃO AGRESSIVA PARA QUALQUER TELA PEQUENA/CELULAR --- */
+    @media screen and (max-width: 768px) {
         .top-header h1 {
-            font-size: 1.6rem !important;
+            font-size: 1.5rem !important;
         }
         .top-header p {
             font-size: 0.8rem !important;
         }
-        
-        /* Força a barra de botões a virar um container de rolagem horizontal */
+
+        /* 1. Força o container de colunas a permanecer sempre em Row e com scroll */
+        [data-testid="stHorizontalBlock"],
         div[data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-direction: row !important;
@@ -87,37 +88,40 @@ st.markdown("""
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             gap: 6px !important;
-            padding-bottom: 8px !important;
+            padding-bottom: 10px !important;
+            width: 100% !important;
         }
 
-        /* Oculta a barra de rolagem nativa feia mantendo a função de deslizar */
-        div[data-testid="stHorizontalBlock"]::-webkit-scrollbar {
-            height: 3px;
-        }
-        div[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
-            background: #f2c4ce;
-            border-radius: 10px;
-        }
-
-        /* Garante tamanho proporcional e compacto em telas estreitas */
-        div[data-testid="column"] {
+        /* 2. Impede que o Streamlit force width de 100% nas colunas em telas mobile */
+        [data-testid="column"],
+        div[data-testid="column"],
+        div[data-testid="stColumn"] {
             width: auto !important;
             min-width: max-content !important;
             flex: 0 0 auto !important;
         }
 
-        /* Botões bem compactos para caber na tela pequena */
+        /* 3. Força os botões a usarem padding e tamanhos super compactos no celular */
+        div.stButton {
+            width: auto !important;
+        }
         div.stButton > button {
             padding: 5px 10px !important;
             font-size: 0.72rem !important;
             border-radius: 12px !important;
             border-width: 1.5px !important;
-            min-height: unset !important;
             height: auto !important;
+            min-height: unset !important;
+            line-height: 1.2 !important;
         }
 
-        .content-card {
-            padding: 15px !important;
+        /* Barra de rolagem fina para indicar que dá pra deslizar no celular */
+        [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+            height: 4px !important;
+        }
+        [data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
+            background: #e05297 !important;
+            border-radius: 10px !important;
         }
     }
     </style>
@@ -135,7 +139,7 @@ st.markdown("""
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# 5. Menu Superior (5 Colunas)
+# 5. Menu Superior
 col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
