@@ -346,13 +346,12 @@ elif pagina == "📍 Localização":
     """, unsafe_allow_html=True)
 
 elif pagina == "🔒 Área Administrativa":
-    admin.render(
+    render_admin(
         db=db, 
         carregar_agendamentos_fn=carregar_agendamentos, 
         atualizar_status_fn=atualizar_status_agendamento, 
         deletar_agendamento_fn=deletar_agendamento
     )
-
 # ==========================================
 # 6. RODAPÉ FIXO
 # ==========================================
