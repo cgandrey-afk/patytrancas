@@ -8,22 +8,28 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Com Espaçamento Superior Reduzido
+# 2. CSS Customizado Com Fundo Estilizado de Tranças
 st.markdown("""
     <style>
-    /* 1. ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO DO STREAMLIT */
+    /* ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO */
     .stAppViewMainTarget {
         padding-top: 0rem !important;
     }
     .stMainBlockContainer, 
     div[data-testid="stAppViewBlockContainer"] {
-        padding-top: 1rem !important; /* Puxa tudo para cima */
+        padding-top: 1rem !important;
         padding-bottom: 1rem !important;
     }
 
-    /* Estilização Geral do Fundo */
+    /* 🎨 FUNDO ROSA COM PADRÃO DE DESENHO DE TRANÇAS (SVG LEVE) */
     .stApp {
-        background: linear-gradient(135deg, #fdf7f9 0%, #f7e8ed 100%);
+        background-color: #fdf7f9;
+        /* Gera um padrão sutil de gominhos/entrelaçados em rosa suave no fundo */
+        background-image: 
+            radial-gradient(#e05297 0.85px, transparent 0.85px), 
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23e05297' stroke-width='1.2' stroke-opacity='0.12'%3E%3Cpath d='M30 0c0 10-10 15-10 30s10 20 10 30m0-60c0 10 10 15 10 30S30 50 30 60'/%3E%3Cpath d='M0 30c10 0 15-10 30-10s20 10 30 10m-60 0c10 0 15 10 30 10s20-10 30-10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        background-size: 20px 20px, 60px 60px;
+        background-attachment: fixed;
         font-family: 'Poppins', sans-serif;
     }
 
@@ -31,7 +37,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Banner / Header Principal Ultra Compacto no Topo */
+    /* Banner / Header Principal */
     .top-header {
         text-align: center;
         padding: 0px 0 8px 0 !important;
@@ -53,7 +59,7 @@ st.markdown("""
         margin-bottom: 5px !important;
     }
 
-    /* ESTILO PADRÃO DOS BOTÕES (DESKTOP E TABLET) */
+    /* ESTILO PADRÃO DOS BOTÕES */
     div.stButton > button {
         width: 100% !important;
         background-color: #ffffff;
@@ -64,7 +70,7 @@ st.markdown("""
         font-weight: 600;
         font-size: 0.85rem;
         transition: all 0.3s ease;
-        box-shadow: 0px 4px 8px rgba(224, 82, 151, 0.08);
+        box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.12);
         text-align: center !important;
         line-height: 1.2 !important;
         white-space: pre-wrap !important;
@@ -77,20 +83,22 @@ st.markdown("""
         transform: translateY(-2px);
     }
 
+    /* Cartões de Conteúdo (Garante boa leitura sobre o fundo desenhado) */
     .content-card {
-        background-color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.95); /* Fundo branco levemente translúcido */
         padding: 18px;
         border-radius: 18px;
-        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.04);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
         border: 1px solid #fce4ec;
         margin-top: 5px;
+        backdrop-filter: blur(4px);
     }
 
     /* --- AJUSTE RESPONSIVO PARA CELULAR --- */
     @media screen and (max-width: 768px) {
         .stMainBlockContainer, 
         div[data-testid="stAppViewBlockContainer"] {
-            padding-top: 0.5rem !important; /* Mais próximo do topo no celular */
+            padding-top: 0.5rem !important;
         }
 
         .top-header h1 {
@@ -100,7 +108,6 @@ st.markdown("""
             font-size: 0.72rem !important;
         }
 
-        /* Encaixa o container exatamente em 100% sem rolagem */
         [data-testid="stHorizontalBlock"],
         div[data-testid="stHorizontalBlock"] {
             display: flex !important;
@@ -113,7 +120,6 @@ st.markdown("""
             padding: 0 !important;
         }
 
-        /* 5 Colunas de exatamente 20% cada */
         [data-testid="column"],
         div[data-testid="column"],
         div[data-testid="stColumn"] {
@@ -122,7 +128,6 @@ st.markdown("""
             width: 20% !important;
         }
 
-        /* Ajuste do texto interno dos botões no celular */
         div.stButton {
             width: 100% !important;
         }
