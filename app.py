@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Forçando Linha Única em Qualquer Tamanho de Tela
+# 2. CSS Customizado Forçando 100% de Encaixe Sem Scroll no Celular
 st.markdown("""
     <style>
     /* Estilização Geral do Fundo */
@@ -24,7 +24,7 @@ st.markdown("""
     /* Banner / Header Principal */
     .top-header {
         text-align: center;
-        padding: 10px 0;
+        padding: 5px 0 10px 0;
     }
     .top-header h1 {
         background: linear-gradient(45deg, #e05297, #9b51e0);
@@ -38,14 +38,14 @@ st.markdown("""
         font-style: italic;
     }
 
-    /* ESTILO PADRÃO DOS BOTÕES */
+    /* ESTILO PADRÃO DOS BOTÕES (DESKTOP) */
     div.stButton > button {
         width: 100% !important;
         background-color: #ffffff;
         color: #e05297;
         border: 2px solid #f2c4ce;
         border-radius: 20px;
-        padding: 8px 12px;
+        padding: 8px 10px;
         font-weight: 600;
         font-size: 0.95rem;
         transition: all 0.3s ease;
@@ -69,59 +69,53 @@ st.markdown("""
         margin-top: 10px;
     }
 
-    /* --- SOBRESCRIÇÃO AGRESSIVA PARA QUALQUER TELA PEQUENA/CELULAR --- */
+    /* --- ENCAIXE PERFEITO FORÇADO PARA CELULAR (Sem Scroll) --- */
     @media screen and (max-width: 768px) {
         .top-header h1 {
-            font-size: 1.5rem !important;
+            font-size: 1.4rem !important;
         }
         .top-header p {
-            font-size: 0.8rem !important;
+            font-size: 0.75rem !important;
         }
 
-        /* 1. Força o container de colunas a permanecer sempre em Row e com scroll */
+        /* 1. Trava o container para ocupar exatos 100% da largura sem criar barra de rolagem */
         [data-testid="stHorizontalBlock"],
         div[data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
-            overflow-x: auto !important;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            gap: 6px !important;
-            padding-bottom: 10px !important;
+            justify-content: space-between !important;
+            overflow: hidden !important; /* Impede scroll */
+            gap: 2px !important; /* Espaçamento mínimo entre os botões */
             width: 100% !important;
+            padding: 0 !important;
         }
 
-        /* 2. Impede que o Streamlit force width de 100% nas colunas em telas mobile */
+        /* 2. Força cada uma das 5 colunas a ocupar exatamente 20% da largura da tela */
         [data-testid="column"],
         div[data-testid="column"],
         div[data-testid="stColumn"] {
-            width: auto !important;
-            min-width: max-content !important;
-            flex: 0 0 auto !important;
+            flex: 1 1 0 !important;
+            min-width: 0 !important;
+            width: 20% !important;
         }
 
-        /* 3. Força os botões a usarem padding e tamanhos super compactos no celular */
+        /* 3. Ajusta o botão interno para encolher fonte e margens para não estourar */
         div.stButton {
-            width: auto !important;
+            width: 100% !important;
         }
         div.stButton > button {
-            padding: 5px 10px !important;
-            font-size: 0.72rem !important;
-            border-radius: 12px !important;
-            border-width: 1.5px !important;
-            height: auto !important;
-            min-height: unset !important;
-            line-height: 1.2 !important;
-        }
-
-        /* Barra de rolagem fina para indicar que dá pra deslizar no celular */
-        [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
-            height: 4px !important;
-        }
-        [data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
-            background: #e05297 !important;
+            padding: 6px 2px !important; /* Margem interna mínima */
+            font-size: 0.65rem !important; /* Fonte menor para caber na tela do celular */
+            font-weight: 700 !important;
             border-radius: 10px !important;
+            border-width: 1px !important;
+            height: auto !important;
+            min-height: 38px !important;
+            line-height: 1.1 !important;
+            text-align: center !important;
+            white-space: normal !important; /* Permite quebrar linha se necessário */
+            word-break: break-word !important;
         }
     }
     </style>
@@ -139,32 +133,32 @@ st.markdown("""
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# 5. Menu Superior
+# 5. Menu Superior (5 Colunas com textos curtos e ícones)
 col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
-    if st.button("📖 Catálogo", use_container_width=True):
+    if st.button("📖\nCatálogo", use_container_width=True):
         st.session_state["pagina_atual"] = "📖 Catálogo"
 
 with col2:
-    if st.button("🗓️ Agendar", use_container_width=True):
+    if st.button("🗓️\nAgendar", use_container_width=True):
         st.session_state["pagina_atual"] = "🗓️ Agendar"
 
 with col3:
-    if st.button("📸 Com IA", use_container_width=True):
+    if st.button("📸\nCom IA", use_container_width=True):
         st.session_state["pagina_atual"] = "📸 Trança com IA"
 
 with col4:
-    if st.button("🖼️ Trabalhos", use_container_width=True):
+    if st.button("🖼️\nGaleria", use_container_width=True):
         st.session_state["pagina_atual"] = "🖼️ Meus Trabalhos"
 
 with col5:
-    if st.button("🔒 Admin", use_container_width=True):
+    if st.button("🔒\nAdmin", use_container_width=True):
         st.session_state["pagina_atual"] = "🔒 Área Administrativa"
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
-# 6. Renderização de Páginas
+# 6. Renderização das Páginas
 pagina = st.session_state["pagina_atual"]
 
 if pagina == "📖 Catálogo":
