@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Com Padrão de Trança Definido no Fundo
+# 2. CSS Customizado Com Tranças Empilhadas / Encadeadas no Fundo
 st.markdown("""
     <style>
     /* ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO */
@@ -21,12 +21,12 @@ st.markdown("""
         padding-bottom: 1rem !important;
     }
 
-    /* 🎨 FUNDO ROSA COM ESTAMPA ILUSTRADA DE TRANÇAS (GOMINHOS TRANÇADOS) */
+    /* 🎨 FUNDO ROSA COM TRANÇAS CONTINUAS EMPILHADAS (GOMINHO SOBRE GOMINHO) */
     .stApp {
         background-color: #fdf5f8;
-        /* Ilustração SVG de gominhos de trança entrelaçados em marca d'água rosa */
-        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e05297' stroke-width='1.5' stroke-opacity='0.18'%3E%3C!-- Gominhos de Trança 1 --%3E%3Cpath d='M20 0 C10 10, 10 20, 20 30 C30 20, 30 10, 20 0 Z'/%3E%3Cpath d='M20 20 C10 30, 10 40, 20 50 C30 40, 30 30, 20 20 Z'/%3E%3Cpath d='M20 40 C10 50, 10 60, 20 70 C30 60, 30 50, 20 40 Z'/%3E%3Cpath d='M20 60 C10 70, 10 80, 20 90 C30 80, 30 70, 20 60 Z'/%3E%3C!-- Gominhos de Trança 2 (Paralelos) --%3E%3Cpath d='M60 0 C50 10, 50 20, 60 30 C70 20, 70 10, 60 0 Z'/%3E%3Cpath d='M60 20 C50 30, 50 40, 60 50 C70 40, 70 30, 60 20 Z'/%3E%3Cpath d='M60 40 C50 50, 50 60, 60 70 C70 60, 70 50, 60 40 Z'/%3E%3Cpath d='M60 60 C50 70, 50 80, 60 90 C70 80, 70 70, 60 60 Z'/%3E%3C/g%3E%3C/svg%3E");
-        background-size: 80px 80px;
+        /* SVG formando colunas de tranças com gominhos sobrepostos */
+        background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e05297' stroke-width='1.6' stroke-opacity='0.22' stroke-linecap='round' stroke-linejoin='round'%3E%3C!-- COLUNA DE TRANÇA 1 (ESQUERDA) --%3E%3C!-- Gomos encadeados e sobrepostos a cada 16px --%3E%3Cpath d='M 30,2 Q 20,10 30,18 Q 40,10 30,2 Z' /%3E%3Cpath d='M 30,14 Q 20,22 30,30 Q 40,22 30,14 Z' /%3E%3Cpath d='M 30,26 Q 20,34 30,42 Q 40,34 30,26 Z' /%3E%3Cpath d='M 30,38 Q 20,46 30,54 Q 40,46 30,38 Z' /%3E%3Cpath d='M 30,50 Q 20,58 30,66 Q 40,58 30,50 Z' /%3E%3Cpath d='M 30,62 Q 20,70 30,78 Q 40,70 30,62 Z' /%3E%3Cpath d='M 30,74 Q 20,82 30,90 Q 40,82 30,74 Z' /%3E%3Cpath d='M 30,86 Q 20,94 30,102 Q 40,94 30,86 Z' /%3E%3Cpath d='M 30,98 Q 20,106 30,114 Q 40,106 30,98 Z' /%3E%3C!-- COLUNA DE TRANÇA 2 (DIREITA) com leve deslocamento --%3E%3Cpath d='M 90,8 Q 80,16 90,24 Q 100,16 90,8 Z' /%3E%3Cpath d='M 90,20 Q 80,28 90,36 Q 100,28 90,20 Z' /%3E%3Cpath d='M 90,32 Q 80,40 90,48 Q 100,40 90,32 Z' /%3E%3Cpath d='M 90,44 Q 80,52 90,60 Q 100,52 90,44 Z' /%3E%3Cpath d='M 90,56 Q 80,64 90,72 Q 100,64 90,56 Z' /%3E%3Cpath d='M 90,68 Q 80,76 90,84 Q 100,76 90,68 Z' /%3E%3Cpath d='M 90,80 Q 80,88 90,96 Q 100,88 90,80 Z' /%3E%3Cpath d='M 90,92 Q 80,100 90,108 Q 100,100 90,92 Z' /%3E%3C/g%3E%3C/svg%3E");
+        background-size: 120px 120px;
         background-attachment: fixed;
         font-family: 'Poppins', sans-serif;
     }
@@ -81,7 +81,7 @@ st.markdown("""
         transform: translateY(-2px);
     }
 
-    /* Cartões de Conteúdo Nítidos */
+    /* Cartões de Conteúdo */
     .content-card {
         background-color: rgba(255, 255, 255, 0.96);
         padding: 18px;
