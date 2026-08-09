@@ -8,7 +8,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Customizado Com Fundo Estilizado de Tranças
+# 2. CSS Customizado Com Padrão de Trança Definido no Fundo
 st.markdown("""
     <style>
     /* ELIMINA O ESPAÇO EM BRANCO NATIVO NO TOPO */
@@ -21,14 +21,12 @@ st.markdown("""
         padding-bottom: 1rem !important;
     }
 
-    /* 🎨 FUNDO ROSA COM PADRÃO DE DESENHO DE TRANÇAS (SVG LEVE) */
+    /* 🎨 FUNDO ROSA COM ESTAMPA ILUSTRADA DE TRANÇAS (GOMINHOS TRANÇADOS) */
     .stApp {
-        background-color: #fdf7f9;
-        /* Gera um padrão sutil de gominhos/entrelaçados em rosa suave no fundo */
-        background-image: 
-            radial-gradient(#e05297 0.85px, transparent 0.85px), 
-            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23e05297' stroke-width='1.2' stroke-opacity='0.12'%3E%3Cpath d='M30 0c0 10-10 15-10 30s10 20 10 30m0-60c0 10 10 15 10 30S30 50 30 60'/%3E%3Cpath d='M0 30c10 0 15-10 30-10s20 10 30 10m-60 0c10 0 15 10 30 10s20-10 30-10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        background-size: 20px 20px, 60px 60px;
+        background-color: #fdf5f8;
+        /* Ilustração SVG de gominhos de trança entrelaçados em marca d'água rosa */
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e05297' stroke-width='1.5' stroke-opacity='0.18'%3E%3C!-- Gominhos de Trança 1 --%3E%3Cpath d='M20 0 C10 10, 10 20, 20 30 C30 20, 30 10, 20 0 Z'/%3E%3Cpath d='M20 20 C10 30, 10 40, 20 50 C30 40, 30 30, 20 20 Z'/%3E%3Cpath d='M20 40 C10 50, 10 60, 20 70 C30 60, 30 50, 20 40 Z'/%3E%3Cpath d='M20 60 C10 70, 10 80, 20 90 C30 80, 30 70, 20 60 Z'/%3E%3C!-- Gominhos de Trança 2 (Paralelos) --%3E%3Cpath d='M60 0 C50 10, 50 20, 60 30 C70 20, 70 10, 60 0 Z'/%3E%3Cpath d='M60 20 C50 30, 50 40, 60 50 C70 40, 70 30, 60 20 Z'/%3E%3Cpath d='M60 40 C50 50, 50 60, 60 70 C70 60, 70 50, 60 40 Z'/%3E%3Cpath d='M60 60 C50 70, 50 80, 60 90 C70 80, 70 70, 60 60 Z'/%3E%3C/g%3E%3C/svg%3E");
+        background-size: 80px 80px;
         background-attachment: fixed;
         font-family: 'Poppins', sans-serif;
     }
@@ -83,18 +81,17 @@ st.markdown("""
         transform: translateY(-2px);
     }
 
-    /* Cartões de Conteúdo (Garante boa leitura sobre o fundo desenhado) */
+    /* Cartões de Conteúdo Nítidos */
     .content-card {
-        background-color: rgba(255, 255, 255, 0.95); /* Fundo branco levemente translúcido */
+        background-color: rgba(255, 255, 255, 0.96);
         padding: 18px;
         border-radius: 18px;
         box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.05);
         border: 1px solid #fce4ec;
         margin-top: 5px;
-        backdrop-filter: blur(4px);
     }
 
-    /* --- AJUSTE RESPONSIVO PARA CELULAR --- */
+    /* --- RESPONSIVO CELULAR --- */
     @media screen and (max-width: 768px) {
         .stMainBlockContainer, 
         div[data-testid="stAppViewBlockContainer"] {
