@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, date
 import firebase_admin
 from firebase_admin import credentials, firestore
+from views.admin import render as render_admin
 
 # ==========================================
 # 0. INICIALIZAÇÃO E CONEXÃO COM O FIREBASE
@@ -344,102 +345,13 @@ elif pagina == "📍 Localização":
         </div>
     """, unsafe_allow_html=True)
 
-# ------------------------------------------
-# 🔒 ÁREA ADMINISTRATIVA (FIREBASE)
-# ------------------------------------------
 elif pagina == "🔒 Área Administrativa":
-    st.markdown("""
-        <div class="content-card">
-            <h3 style="color: #e05297; margin-bottom: 5px;">🔒 Painel Administrativo (Firebase)</h3>
-            <p style="color: #666; font-size: 0.9rem;">Gerencie os agendamentos registrados no banco de dados.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.write("")
-
-    if "admin_logado" not in st.session_state:
-        st.session_state["admin_logado"] = False
-
-    if not st.session_state["admin_logado"]:
-        with st.form("form_login_admin"):
-            st.subheader("🔑 Login do Administrador")
-            senha_input = st.text_input("Digite a senha de acesso:", type="password")
-            btn_login = st.form_submit_button("Entrar no Painel")
-            
-            if btn_login:
-                if senha_input == "admin123":
-                    st.session_state["admin_logado"] = True
-                    st.success("Acesso liberado!")
-                    st.rerun()
-                else:
-                    st.error("Senha incorreta!")
-    else:
-        col_admin_header1, col_admin_header2 = st.columns([4, 1])
-        with col_admin_header2:
-            if st.button("🚪 Sair do Admin"):
-                st.session_state["admin_logado"] = False
-                st.rerun()
-
-        df_agendamentos = carregar_agendamentos()
-
-        if not df_agendamentos.empty:
-            total_agendamentos = len(df_agendamentos)
-            pendentes = len(df_agendamentos[df_agendamentos['status'] == 'Pendente']) if 'status' in df_agendamentos.columns else 0
-            confirmados = len(df_agendamentos[df_agendamentos['status'] == 'Confirmado']) if 'status' in df_agendamentos.columns else 0
-        else:
-            total_agendamentos, pendentes, confirmados = 0, 0, 0
-
-        m1, m2, m3 = st.columns(3)
-        m1.metric("Total de Solicitações", total_agendamentos)
-        m2.metric("Pendentes ⏳", pendentes)
-        m3.metric("Confirmados ✅", confirmados)
-
-        st.markdown("<hr style='border: 0.5px solid #f2c4ce; margin: 15px 0;'>", unsafe_allow_html=True)
-        st.subheader("📋 Agendamentos Registrados")
-
-        if df_agendamentos.empty:
-            st.info("Nenhum agendamento registrado até o momento.")
-        else:
-            st.dataframe(
-                df_agendamentos.rename(columns={
-                    "id": "ID Documento",
-                    "cliente_nome": "Cliente",
-                    "cliente_telefone": "Telefone",
-                    "servico": "Serviço",
-                    "data_agendamento": "Data",
-                    "horario": "Horário",
-                    "status": "Status",
-                    "criado_em": "Criado em"
-                }),
-                use_container_width=True,
-                hide_index=True
-            )
-
-            st.markdown("<hr style='border: 0.5px solid #f2c4ce; margin: 15px 0;'>", unsafe_allow_html=True)
-            st.subheader("⚙️ Gerenciar Agendamento")
-            
-            c_id, c_status, c_btn1, c_btn2 = st.columns([2, 1.5, 1, 1])
-            
-            with c_id:
-                lista_ids = df_agendamentos['id'].tolist()
-                id_selecionado = st.selectbox("Selecione o ID do Documento:", lista_ids)
-                
-            with c_status:
-                novo_status = st.selectbox("Novo Status:", ["Pendente", "Confirmado", "Concluído", "Cancelado"])
-
-            with c_btn1:
-                st.write(" ")
-                if st.button("Atualizar Status"):
-                    atualizar_status_agendamento(id_selecionado, novo_status)
-                    st.success("Status atualizado com sucesso!")
-                    st.rerun()
-
-            with c_btn2:
-                st.write(" ")
-                if st.button("🗑️ Excluir"):
-                    deletar_agendamento(id_selecionado)
-                    st.warning("Agendamento excluído!")
-                    st.rerun()
+    render_admin(
+        db=db, 
+        carregar_agendamentos_fn=carregar_agendamentos, 
+        atualizar_status_fn=atualizar_status_agendamento, 
+        deletar_agendamento_fn=deletar_agendamento
+    )
 
 # ==========================================
 # 6. RODAPÉ FIXO
