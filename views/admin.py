@@ -2,21 +2,18 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# -------------------------------------------------------------------
-# Módulos do Firebase (Importe as funções do seu arquivo principal ou helper)
-# Exemplo: import firebase_admin / firestore de onde estiver configurado
-# -------------------------------------------------------------------
-
 def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendamento_fn):
-    # Envolve todo o conteúdo do Admin no card de fundo branco
+    # =========================================================
+    # INÍCIO DO BLOCO DE FUNDO BRANCO
+    # =========================================================
     st.markdown("""
         <div class="content-card">
             <h2 style="color: #e05297; margin-bottom: 5px;">🔒 Área Administrativa</h2>
-            <p style="color: #555; font-size: 0.9rem;">Gerencie o catálogo de tranças, a agenda e os agendamentos do estúdio.</p>
-            <hr style="border: 0.5px solid #fce4ec; margin: 12px 0;">
+            <p style="color: #444; font-size: 0.9rem;">Gerencie os modelos do catálogo, horários de atendimento e solicitações de clientes.</p>
+            <hr style="border: 0.5px solid #f2c4ce; margin: 15px 0;">
     """, unsafe_allow_html=True)
 
-    # Controle de Sessão / Autenticação
+    # Controle de Autenticação na Sessão
     if 'autenticado' not in st.session_state:
         st.session_state['autenticado'] = False
 
@@ -27,7 +24,6 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
             btn_entrar = st.form_submit_button("Entrar no Painel")
             
             if btn_entrar:
-                # Altere a senha se necessário (padrão 12345)
                 if senha == "12345":
                     st.session_state['autenticado'] = True
                     st.success("Acesso liberado!")
@@ -35,28 +31,28 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                 else:
                     st.error("Senha incorreta!")
     else:
-        # Cabeçalho com botão de saída
+        # Cabeçalho com botão para sair
         col_header1, col_header2 = st.columns([4, 1])
         with col_header1:
-            st.success("Bem-vinda de volta, Paty!")
+            st.success("Bem-vinda de volta!")
         with col_header2:
             if st.button("🚪 Sair"):
                 st.session_state['autenticado'] = False
                 st.rerun()
 
-        st.write("") # Espaçamento
+        st.write("")
 
-        # Abas de Gerenciamento
-        tab_agendamentos, tab_cadastrar, tab_agenda = st.tabs([
-            "📋 Agendamentos Recebidos", 
+        # NAVEGAÇÃO POR ABAS
+        tab1, tab2, tab3 = st.tabs([
+            "📋 Agenda & Solicitações", 
             "➕ Cadastrar Trança", 
-            "📅 Agenda & Horários"
+            "📅 Gerenciar Horários"
         ])
 
         # -----------------------------------------------------------
-        # ABA 1: Agendamentos do Firebase
+        # ABA 1: Agendamentos Recebidos (Firebase Firestore)
         # -----------------------------------------------------------
-        with tab_agendamentos:
+        with tab1:
             st.write("### 📋 Solicitações no Banco de Dados")
             
             df_agendamentos = carregar_agendamentos_fn()
@@ -89,74 +85,70 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                 )
 
                 st.markdown("<hr style='border: 0.5px solid #fce4ec; margin: 15px 0;'>", unsafe_allow_html=True)
-                st.write("#### ⚙️ Gerenciar Agendamento Selecionado")
+                st.write("#### ⚙️ Alterar Status ou Deletar Registros")
                 
                 c_id, c_status, c_btn1, c_btn2 = st.columns([2, 1.5, 1, 1])
                 
                 with c_id:
-                    id_selecionado = st.selectbox("Selecione o ID:", df_agendamentos['id'].tolist())
+                    id_selecionado = st.selectbox("Selecione o ID do Agendamento:", df_agendamentos['id'].tolist())
                 with c_status:
                     novo_status = st.selectbox("Novo Status:", ["Pendente", "Confirmado", "Concluído", "Cancelado"])
                 with c_btn1:
                     st.write(" ")
                     if st.button("Atualizar"):
                         atualizar_status_fn(id_selecionado, novo_status)
-                        st.success("Status atualizado!")
+                        st.success("Status atualizado com sucesso!")
                         st.rerun()
                 with c_btn2:
                     st.write(" ")
                     if st.button("🗑️ Excluir"):
                         deletar_agendamento_fn(id_selecionado)
-                        st.warning("Agendamento excluído!")
+                        st.warning("Agendamento removido!")
                         st.rerun()
             else:
-                st.info("Nenhum agendamento encontrado no Firebase.")
+                st.info("Nenhum agendamento registrado até o momento.")
 
         # -----------------------------------------------------------
-        # ABA 2: Novo Modelo de Trança (Salvar no Firebase / Catálogo)
+        # ABA 2: Cadastrar Modelo de Trança
         # -----------------------------------------------------------
-        with tab_cadastrar:
-            st.write("### ➕ Adicionar Modelo ao Catálogo")
-            with st.form("form_nova_tranca"):
-                nome_tranca = st.text_input("Nome do Modelo")
+        with tab2:
+            st.write("### ➕ Novo Modelo de Trança")
+            with st.form("form_novo_modelo"):
+                nome = st.text_input("Nome do Modelo")
                 tempo = st.number_input("Tempo Padrão (em minutos)", step=30, value=180)
                 preco = st.text_input("Preço Estimado (ex: R$ 150,00)")
                 imagem = st.file_uploader("Foto da Trança", type=["jpg", "jpeg", "png"])
                 
-                btn_salvar_tranca = st.form_submit_button("Salvar Trança no Banco")
-                
-                if btn_salvar_tranca:
-                    if nome_tranca and preco:
-                        # Salva a nova trança diretamente na coleção 'catalogo' do Firebase
-                        doc_ref = db.collection("catalogo").document()
-                        doc_ref.set({
-                            "nome": nome_tranca,
+                if st.form_submit_button("Salvar Trança"):
+                    if nome and preco:
+                        db.collection("catalogo").add({
+                            "nome": nome,
                             "tempo_minutos": tempo,
                             "preco": preco,
                             "criado_em": datetime.now().strftime("%Y-%m-%d %H:%M")
                         })
-                        st.success(f"Modelo '{nome_tranca}' salvo com sucesso no Firebase!")
+                        st.success(f"Modelo '{nome}' cadastrado com sucesso!")
                     else:
-                        st.error("Por favor, preencha o Nome e o Preço do modelo.")
+                        st.error("Preencha o nome e o preço antes de salvar.")
 
         # -----------------------------------------------------------
-        # ABA 3: Gerenciar Horários Livres (Configuração de Agenda)
+        # ABA 3: Gerenciar Horários de Expediente
         # -----------------------------------------------------------
-        with tab_agenda:
-            st.write("### 📅 Configurar Horários Disponíveis")
-            with st.form("form_agenda_horarios"):
+        with tab3:
+            st.write("### 📅 Gerenciar Horários Livres")
+            with st.form("form_horarios_livres"):
                 data_trabalho = st.date_input("Data do Expediente")
                 horarios = st.text_input("Horários disponíveis (separados por vírgula)", value="08:00, 13:00, 17:00")
-                btn_salvar_agenda = st.form_submit_button("Atualizar Agenda no Firebase")
                 
-                if btn_salvar_agenda:
-                    # Salva os horários liberados para determinado dia na coleção 'agenda'
+                if st.form_submit_button("Atualizar Agenda"):
                     lista_horarios = [h.strip() for h in horarios.split(",") if h.strip()]
                     db.collection("agenda").document(str(data_trabalho)).set({
                         "data": str(data_trabalho),
                         "horarios_disponiveis": lista_horarios
                     })
-                    st.success(f"Agenda para o dia {data_trabalho} atualizada com sucesso!")
+                    st.success(f"Agenda para {data_trabalho} atualizada com sucesso!")
 
-    # Fecha o div do fundo branco
+    # =========================================================
+    # FIM DO BLOCO DE FUNDO BRANCO
+    # =========================================================
     st.markdown("</div>", unsafe_allow_html=True)
