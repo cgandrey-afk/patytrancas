@@ -346,7 +346,7 @@ elif pagina == "📍 Localização":
     """, unsafe_allow_html=True)
 
 elif pagina == "🔒 Área Administrativa":
-    render_admin(
+    admin.render(
         db=db, 
         carregar_agendamentos_fn=carregar_agendamentos, 
         atualizar_status_fn=atualizar_status_agendamento, 
