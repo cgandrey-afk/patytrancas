@@ -100,7 +100,7 @@ st.markdown("""
 
 
 # ==========================================
-# 3. MENU DE NAVEGAÇÃO RESPONSIVO
+# 3. MENU DE NAVEGAÇÃO RESPONSIVO (SOLUÇÃO DIRETA)
 # ==========================================
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
@@ -114,27 +114,27 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# --- A. MENU DESKTOP ---
-st.markdown('<div class="menu-desktop-container">', unsafe_allow_html=True)
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-
-for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opcoes_menu.items()):
+# Wrapper HTML ÚNICO para o Menu Desktop
+st.markdown('<div class="nav-desktop">', unsafe_allow_html=True)
+cols = st.columns(len(opcoes_menu))
+for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
     with col:
         if st.button(label, key=f"btn_desk_{label}", use_container_width=True):
             st.session_state["pagina_atual"] = pagina_target
             st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- B. MENU MOBILE ---
-st.markdown('<div class="menu-mobile-container">', unsafe_allow_html=True)
-with st.expander("≡ MENU DE NAVEGAÇÃO", expanded=False):
-    for label, pagina_target in opcoes_menu.items():
-        is_active = (st.session_state["pagina_atual"] == pagina_target)
-        prefixo = "➔ " if is_active else ""
-        
-        if st.button(f"{prefixo}{label}", key=f"btn_mob_{label}", use_container_width=True):
-            st.session_state["pagina_atual"] = pagina_target
-            st.rerun()
+# Wrapper HTML ÚNICO para o Menu Mobile
+st.markdown('<div class="nav-mobile">', unsafe_allow_html=True)
+opcao_selecionada = st.selectbox(
+    "≡ NAVEGAÇÃO",
+    options=list(opcoes_menu.keys()),
+    index=list(opcoes_menu.values()).index(st.session_state["pagina_atual"]),
+    key="select_nav_mobile"
+)
+if opcoes_menu[opcao_selecionada] != st.session_state["pagina_atual"]:
+    st.session_state["pagina_atual"] = opcoes_menu[opcao_selecionada]
+    st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)

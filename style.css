@@ -98,7 +98,8 @@ div[role="radiogroup"] label span {
 
 /* Estilo Base dos Botões Globais */
 div.stButton > button, 
-div.stFormSubmitButton > button {
+div.stFormSubmitButton > button,
+div[data-testid="stPopover"] > button {
     background-color: #ffffff !important;
     color: #e05297 !important;
     border: 2px solid #f2c4ce !important;
@@ -108,42 +109,42 @@ div.stFormSubmitButton > button {
 }
 
 div.stButton > button:hover,
-div.stFormSubmitButton > button:hover {
+div.stFormSubmitButton > button:hover,
+div[data-testid="stPopover"] > button:hover {
     background-color: #e05297 !important;
     color: #ffffff !important;
     border-color: #e05297 !important;
 }
 
-/* --- VISIBILIDADE PADRÃO (DESKTOP: TELAS > 768px) --- */
+/* --- REGRAS DE VISIBILIDADE NO PC (TELAS > 768px) --- */
 
-/* Exibe o Menu Desktop e formata o grid */
-div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] {
+/* Exibe o Menu Desktop */
+.menu-desktop-wrapper {
     display: block !important;
 }
 
-div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div[data-testid="stHorizontalBlock"] {
+/* Ajusta as colunas do desktop lado a lado */
+.menu-desktop-wrapper div[data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 4px !important;
 }
 
-div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div[data-testid="column"] {
+.menu-desktop-wrapper div[data-testid="column"] {
     flex: 1 1 0px !important;
     min-width: 0 !important;
 }
 
-div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div.stButton > button {
+.menu-desktop-wrapper div.stButton > button {
     width: 100% !important;
-    padding: 6px 2px !important;
-    font-size: clamp(0.68rem, 2.2vw, 0.85rem) !important;
-    border-radius: 12px !important;
+    padding: 8px 2px !important;
+    font-size: clamp(0.7rem, 1.2vw, 0.85rem) !important;
     white-space: nowrap !important;
 }
 
-/* Esconde o Expander Mobile no PC */
-div[data-testid="element-container"]:has(.menu-mobile-container),
-div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] {
+/* Oculta o Menu Mobile no PC */
+.menu-mobile-wrapper {
     display: none !important;
 }
 
@@ -166,57 +167,46 @@ div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-test
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. ESCONDE TOTALMENTE O MENU DESKTOP NO CELULAR */
-    div[data-testid="element-container"]:has(.menu-desktop-container),
-    div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] {
+    /* 1. ESCONDE O MENU DESKTOP NO CELULAR */
+    .menu-desktop-wrapper {
         display: none !important;
-        height: 0px !important;
-        margin: 0px !important;
-        padding: 0px !important;
-        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* 2. EXIBE O MENU EXPANDER NO CELULAR */
-    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] {
+    /* 2. EXIBE O MENU MOBILE NO CELULAR */
+    .menu-mobile-wrapper {
         display: block !important;
-        visibility: visible !important;
+        width: 100% !important;
         margin-bottom: 10px !important;
     }
 
-    /* Estilização da caixa do Expander no Mobile */
-    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div[data-testid="stExpander"] {
-        border: 2px solid #f2c4ce !important;
-        background-color: #ffffff !important;
-        border-radius: 14px !important;
-        box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.08) !important;
+    /* Estilização do Botão Popover no Celular */
+    .menu-mobile-wrapper div[data-testid="stPopover"] {
+        width: 100% !important;
     }
 
-    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] summary {
-        color: #e05297 !important;
-        font-weight: 700 !important;
+    .menu-mobile-wrapper div[data-testid="stPopover"] > button {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 10px 16px !important;
         font-size: 0.95rem !important;
-        padding: 10px 14px !important;
     }
 
-    /* Botões empilhados verticalmente dentro do expander */
-    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div.stButton > button {
+    /* Botões internos dentro da lista aberta do Popover */
+    div[data-testid="stPopoverBody"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
-        padding: 10px 16px !important;
+        padding: 10px 14px !important;
         margin-bottom: 4px !important;
-        font-size: 0.9rem !important;
         background-color: #fdf8fa !important;
         border: 1px solid #f2c4ce !important;
         border-radius: 10px !important;
         justify-content: flex-start !important;
     }
 
-    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div.stButton > button:hover {
-        background-color: #e05297 !important;
-        color: #ffffff !important;
-    }
-
-    /* Ajustes nos Cards no celular */
+    /* Ajuste de espaçamento dos Cards no celular */
     .content-card, .agendamento-card {
         padding: 14px !important;
     }
