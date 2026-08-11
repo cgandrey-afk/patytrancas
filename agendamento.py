@@ -3,11 +3,11 @@ from datetime import date
 
 def render(salvar_agendamento_fn):
     """
-    Renderiza a página de agendamento com layout auto-ajustável e responsivo para telas pequenas.
+    Renderiza a página de agendamento corrigindo a renderização dos Selectboxes e inputs.
     """
     st.markdown("""
         <style>
-        /* Container Principal */
+        /* Container Principal com fundo branco e contorno discreto */
         .agendamento-card {
             background-color: #ffffff !important;
             padding: 24px;
@@ -15,35 +15,51 @@ def render(salvar_agendamento_fn):
             border: 1px solid #f2c4ce;
             box-shadow: 0px 6px 20px rgba(224, 82, 151, 0.08);
             margin: 0 auto 20px auto;
-            max-width: 900px; /* Evita que no PC fique gigante esticado */
+            max-width: 900px;
             width: 100%;
         }
 
-        /* Labels visíveis e legíveis */
+        /* Labels dos campos sempre visíveis e escuros */
         .agendamento-card label, 
         div[data-testid="stForm"] label,
         div[data-testid="stForm"] label p {
             color: #262730 !important;
             font-weight: 600 !important;
             font-size: 0.95rem !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 6px !important;
         }
 
-        /* Estilização e altura confortável dos Inputs */
-        div[data-testid="stForm"] input, 
-        div[data-testid="stForm"] select,
-        div[data-testid="stForm"] div[role="combobox"] {
+        /* --- CORREÇÃO DOS CAMPOS DE TEXTO E DATA --- */
+        div[data-testid="stForm"] input {
             background-color: #fdf8fa !important;
             color: #262730 !important;
             border: 1.5px solid #f2c4ce !important;
-            border-radius: 12px !important;
-            min-height: 45px !important; /* Altura ideal para toque no celular */
+            border-radius: 10px !important;
+            min-height: 45px !important;
             font-size: 0.95rem !important;
         }
 
-        div[data-testid="stForm"] input:focus {
-            border-color: #e05297 !important;
-            box-shadow: 0 0 0 2px rgba(224, 82, 151, 0.2) !important;
+        /* --- CORREÇÃO DOS SELECTBOXES (ESTILO E HORÁRIO) --- */
+        /* Estiliza o container do SelectBox do Streamlit (BaseWeb) */
+        div[data-testid="stForm"] div[data-baseweb="select"] > div {
+            background-color: #fdf8fa !important;
+            border: 1.5px solid #f2c4ce !important;
+            border-radius: 10px !important;
+            min-height: 45px !important;
+            color: #262730 !important;
+        }
+
+        /* Garante que o texto selecionado dentro do select fique preto/escuro e visível */
+        div[data-testid="stForm"] div[data-baseweb="select"] span,
+        div[data-testid="stForm"] div[data-baseweb="select"] div {
+            color: #262730 !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+        }
+
+        /* Ícone da Seta do Select */
+        div[data-testid="stForm"] div[data-baseweb="select"] svg {
+            fill: #e05297 !important;
         }
 
         /* Botão do formulário */
@@ -52,13 +68,14 @@ def render(salvar_agendamento_fn):
             background-color: #e05297 !important;
             color: #ffffff !important;
             border: none !important;
-            border-radius: 14px !important;
+            border-radius: 12px !important;
             padding: 12px 20px !important;
             font-weight: 700 !important;
             font-size: 1rem !important;
             box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.25) !important;
             width: 100% !important;
             min-height: 48px !important;
+            margin-top: 10px !important;
             cursor: pointer;
         }
 
@@ -67,24 +84,20 @@ def render(salvar_agendamento_fn):
             color: #ffffff !important;
         }
 
-        /* ==========================================
-           RESPONSIVIDADE / ADAPTAÇÃO PARA CELULAR
-           ========================================== */
+        /* --- RESPONSIVIDADE PARA CELULAR --- */
         @media screen and (max-width: 768px) {
             .agendamento-card {
                 padding: 16px 12px !important;
-                border-radius: 16px !important;
             }
 
-            /* Força TODOS os blocos horizontais do formulário a virarem linha vertical */
+            /* Empilha as colunas verticalmente no celular sem espremer */
             div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 14px !important;
+                gap: 12px !important;
                 width: 100% !important;
             }
 
-            /* Força cada coluna a ocupar 100% da largura da tela */
             div[data-testid="stForm"] div[data-testid="column"],
             div[data-testid="stForm"] div[data-testid="stColumn"] {
                 width: 100% !important;
@@ -92,12 +105,6 @@ def render(salvar_agendamento_fn):
                 min-width: 100% !important;
                 max-width: 100% !important;
                 padding: 0 !important;
-            }
-
-            /* Garante que os inputs preencham toda a largura disponível */
-            div[data-testid="stForm"] div[data-baseweb="input"],
-            div[data-testid="stForm"] div[data-baseweb="select"] {
-                width: 100% !important;
             }
         }
         </style>
@@ -132,7 +139,6 @@ def render(salvar_agendamento_fn):
             with c_h:
                 horario_atendimento = st.selectbox("Horário:", ["08:00", "09:00", "10:30", "13:00", "14:30", "16:00"])
 
-        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
         btn_enviar = st.form_submit_button("✨ Confirmar Solicitação de Agendamento")
 
         if btn_enviar:
