@@ -98,7 +98,7 @@ div[role="radiogroup"] label span {
 }
 
 /* =============================================================
-   4. BOTÕES NATIVOS DO STREAMLIT
+   4. BOTÕES NATIVOS DO STREAMLIT (LARGURA E TEXTO FLEXÍVEIS)
    ============================================================= */
 div.stButton {
     width: 100% !important;
@@ -112,9 +112,19 @@ div.stButton > button {
     border-radius: 16px !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
-    display: inline-flex !important;
+    
+    /* Centralização do texto */
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    text-align: center !important;
+    
+    /* Fonte e padding flexíveis para nunca vazar */
+    padding: 6px 4px !important;
+    font-size: clamp(0.65rem, 2.5vw, 0.95rem) !important; /* Diminui a fonte no celular e aumenta na TV/PC */
+    white-space: normal !important;                      /* Permite que quebre linha interna se o texto for muito grande */
+    word-break: break-word !important;
+    min-height: 44px !important;                          /* Altura mínima para toque em telas touch */
 }
 
 div.stButton > button:hover {
@@ -124,30 +134,31 @@ div.stButton > button:hover {
 }
 
 /* =============================================================
-   5. RESPONSIVIDADE PARA CELULARES (< 768px)
+   5. RESPONSIVIDADE AUTOMÁTICA (AJUSTE PERFEITO AO TAMANHO DA TELA)
    ============================================================= */
+/* Mantém as colunas lado a lado em qualquer largura de tela */
+div[data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important; /* Espaçamento proporcional entre os botões */
+    width: 100% !important;
+}
+
+/* Força cada coluna a se adaptar dinamicamente ao espaço disponível */
+div[data-testid="column"] {
+    flex: 1 1 0px !important;
+    min-width: 0 !important; /* Impede que o conteúdo empurre a coluna para fora da tela */
+}
+
 @media screen and (max-width: 768px) {
     .agendamento-card, .content-card {
-        padding: 16px 12px !important;
+        padding: 14px 10px !important;
     }
 
+    /* Reduz levemente a borda e o padding em telas pequenas */
     div.stButton > button {
-        padding: 6px 8px !important;
-        font-size: 0.8rem !important;
-        min-height: 42px !important;
-    }
-
-    /* FORÇA AS COLUNAS DO STREAMLIT A FICAREM LADO A LADO NO MOBILE */
-    div[data-testid="column"] {
-        width: calc(50% - 0.5rem) !important;
-        flex: 1 1 calc(50% - 0.5rem) !important;
-        min-width: calc(50% - 0.5rem) !important;
-    }
-    
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 0.5rem !important;
+        padding: 4px 2px !important;
+        border-radius: 12px !important;
     }
 }
