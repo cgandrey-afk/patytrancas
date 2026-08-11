@@ -96,118 +96,52 @@ div[role="radiogroup"] label span {
    4. ESTILIZAÇÃO E REGRA DOS MENUS (DESKTOP E MOBILE)
    ============================================================= */
 
-/* Estilo Base dos Botões Globais */
-div.stButton > button, 
-div.stFormSubmitButton > button,
-div[data-testid="stPopover"] > button {
-    background-color: #ffffff !important;
-    color: #e05297 !important;
-    border: 2px solid #f2c4ce !important;
-    border-radius: 14px !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease !important;
-}
-
-div.stButton > button:hover,
-div.stFormSubmitButton > button:hover,
-div[data-testid="stPopover"] > button:hover {
-    background-color: #e05297 !important;
-    color: #ffffff !important;
-    border-color: #e05297 !important;
-}
-
-/* --- REGRAS DE VISIBILIDADE NO PC (TELAS > 768px) --- */
-
-/* Exibe o Menu Desktop */
-.menu-desktop-wrapper {
+/* --- VISIBILIDADE NO PC (TELAS > 768px) --- */
+.nav-desktop {
     display: block !important;
 }
 
-/* Ajusta as colunas do desktop lado a lado */
-.menu-desktop-wrapper div[data-testid="stHorizontalBlock"] {
+.nav-desktop div[data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 4px !important;
 }
 
-.menu-desktop-wrapper div[data-testid="column"] {
+.nav-desktop div[data-testid="column"] {
     flex: 1 1 0px !important;
     min-width: 0 !important;
 }
 
-.menu-desktop-wrapper div.stButton > button {
+.nav-desktop div.stButton > button {
     width: 100% !important;
     padding: 8px 2px !important;
     font-size: clamp(0.7rem, 1.2vw, 0.85rem) !important;
     white-space: nowrap !important;
 }
 
-/* Oculta o Menu Mobile no PC */
-.menu-mobile-wrapper {
+/* Oculta o Selectbox Mobile no PC */
+.nav-mobile {
     display: none !important;
 }
-
-/* --- BOTOES DE AÇÃO / FORMULÁRIO --- */
-.botoes-acao div.stButton,
-.botoes-acao div.stFormSubmitButton {
-    width: 100% !important;
-}
-
-.botoes-acao div.stButton > button,
-.botoes-acao div.stFormSubmitButton > button {
-    width: 100% !important;
-    padding: 10px 14px !important;
-    font-size: 0.95rem !important;
-}
-
 
 /* =============================================================
    5. RESPONSIVIDADE (MOBILE: TELAS <= 768px)
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. ESCONDE O MENU DESKTOP NO CELULAR */
-    .menu-desktop-wrapper {
+    /* Esconde o menu de botões no celular */
+    .nav-desktop {
         display: none !important;
         height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    /* 2. EXIBE O MENU MOBILE NO CELULAR */
-    .menu-mobile-wrapper {
+    /* Exibe o selectbox no celular */
+    .nav-mobile {
         display: block !important;
         width: 100% !important;
         margin-bottom: 10px !important;
-    }
-
-    /* Estilização do Botão Popover no Celular */
-    .menu-mobile-wrapper div[data-testid="stPopover"] {
-        width: 100% !important;
-    }
-
-    .menu-mobile-wrapper div[data-testid="stPopover"] > button {
-        width: 100% !important;
-        text-align: center !important;
-        padding: 10px 16px !important;
-        font-size: 0.95rem !important;
-    }
-
-    /* Botões internos dentro da lista aberta do Popover */
-    div[data-testid="stPopoverBody"] div.stButton > button {
-        width: 100% !important;
-        text-align: left !important;
-        padding: 10px 14px !important;
-        margin-bottom: 4px !important;
-        background-color: #fdf8fa !important;
-        border: 1px solid #f2c4ce !important;
-        border-radius: 10px !important;
-        justify-content: flex-start !important;
-    }
-
-    /* Ajuste de espaçamento dos Cards no celular */
-    .content-card, .agendamento-card {
-        padding: 14px !important;
     }
 }
