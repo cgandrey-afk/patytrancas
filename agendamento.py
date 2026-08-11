@@ -3,7 +3,7 @@ from datetime import date
 
 def render(salvar_agendamento_fn):
     """
-    Renderiza a página de agendamento de horários.
+    Renderiza a página de agendamento usando componentes nativos leves e limpos.
     """
     st.markdown("""
         <style>
@@ -15,11 +15,48 @@ def render(salvar_agendamento_fn):
             border: 1px solid #f2c4ce;
             box-shadow: 0px 6px 20px rgba(224, 82, 151, 0.08);
             margin: 0 auto 20px auto;
-            max-width: 900px;
+            max-width: 850px;
             width: 100%;
         }
 
-        /* Botão do formulário estilizado */
+        /* Estilo dos Labels */
+        .agendamento-card label, 
+        div[data-testid="stForm"] label,
+        div[data-testid="stForm"] label p {
+            color: #262730 !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+        }
+
+        /* Inputs de Texto e Data com fundo claro e borda rosa */
+        div[data-testid="stForm"] input {
+            background-color: #ffffff !important;
+            color: #262730 !important;
+            border: 1.5px solid #f2c4ce !important;
+            border-radius: 10px !important;
+            min-height: 45px !important;
+        }
+
+        /* Radio Buttons estilo Chips/Pills (Opções de Trança e Horário) */
+        div[data-testid="stForm"] div[role="radiogroup"] {
+            gap: 8px !important;
+        }
+        
+        div[data-testid="stForm"] div[role="radiogroup"] label {
+            background-color: #fdf8fa !important;
+            border: 1px solid #f2c4ce !important;
+            padding: 8px 14px !important;
+            border-radius: 20px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        div[data-testid="stForm"] div[role="radiogroup"] label:hover {
+            border-color: #e05297 !important;
+            background-color: #fce8f0 !important;
+        }
+
+        /* Botão do formulário */
         div[data-testid="stForm"] button[kind="primaryFormSubmit"],
         div[data-testid="stForm"] button {
             background-color: #e05297 !important;
@@ -38,16 +75,14 @@ def render(salvar_agendamento_fn):
 
         div[data-testid="stForm"] button:hover {
             background-color: #c93b7f !important;
-            color: #ffffff !important;
         }
 
-        /* --- RESPONSIVIDADE PARA CELULAR (Empilha os campos em 100% de largura) --- */
+        /* --- RESPONSIVIDADE CELULAR --- */
         @media screen and (max-width: 768px) {
             .agendamento-card {
                 padding: 16px 12px !important;
             }
 
-            /* Força as colunas a empilharem perfeitamente na vertical */
             div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
                 display: flex !important;
                 flex-direction: column !important;
@@ -60,7 +95,6 @@ def render(salvar_agendamento_fn):
                 width: 100% !important;
                 flex: 1 1 100% !important;
                 min-width: 100% !important;
-                max-width: 100% !important;
                 padding: 0 !important;
             }
         }
@@ -77,24 +111,31 @@ def render(salvar_agendamento_fn):
         
         with col_f1:
             nome_cliente = st.text_input("Seu Nome Completo:", placeholder="Digite seu nome completo")
-            servico_escolhido = st.selectbox("Escolha o Estilo de Trança:", [
-                "Tranças Box Braids",
+            telefone_cliente = st.text_input("Seu WhatsApp / Telefone:", placeholder="(19) 99999-9999")
+            
+        with col_f2:
+            data_atendimento = st.date_input("Data do Atendimento:", min_value=date.today())
+            horario_atendimento = st.select_slider(
+                "Horário de Atendimento:",
+                options=["08:00", "09:00", "10:30", "13:00", "14:30", "16:00"]
+            )
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Substituído por st.radio para não ter o bug de dropdown do Streamlit
+        servico_escolhido = st.radio(
+            "Escolha o Estilo de Trança:",
+            options=[
+                "Box Braids",
                 "Nagô Desenhada / Lateral",
                 "Goddess Braids / Bohemian",
                 "Gypsy Braids",
                 "Fulani Braids",
                 "Entrelace / Crochet Braids",
-                "Outro / Atendimento Personalizado"
-            ])
-            
-        with col_f2:
-            telefone_cliente = st.text_input("Seu WhatsApp / Telefone:", placeholder="(19) 99999-9999")
-            
-            c_d, c_h = st.columns(2)
-            with c_d:
-                data_atendimento = st.date_input("Data do Atendimento:", min_value=date.today())
-            with c_h:
-                horario_atendimento = st.selectbox("Horário:", ["08:00", "09:00", "10:30", "13:00", "14:30", "16:00"])
+                "Outro / Personalizado"
+            ],
+            horizontal=True
+        )
 
         btn_enviar = st.form_submit_button("✨ Confirmar Solicitação de Agendamento")
 
