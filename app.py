@@ -107,30 +107,32 @@ if "pagina_atual" not in st.session_state:
 
 # Envolve o menu na div com a classe para controlar o tamanho dos botões
 st.markdown('<div class="menu-navegacao">', unsafe_allow_html=True)
+
+# 6 colunas iguais para os botões do menu
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
-    if st.button("📖\nCatálogo", use_container_width=True):
+    if st.button("📖 Catálogo", use_container_width=True):
         st.session_state["pagina_atual"] = "📖 Catálogo"
 
 with col2:
-    if st.button("🗓️\nAgendar", use_container_width=True):
+    if st.button("🗓️ Agendar", use_container_width=True):
         st.session_state["pagina_atual"] = "🗓️ Agendar"
 
 with col3:
-    if st.button("📸\nCom IA", use_container_width=True):
+    if st.button("📸 Com IA", use_container_width=True):
         st.session_state["pagina_atual"] = "📸 Trança com IA"
 
 with col4:
-    if st.button("🖼️\nGaleria", use_container_width=True):
+    if st.button("🖼️ Galeria", use_container_width=True):
         st.session_state["pagina_atual"] = "🖼️ Meus Trabalhos"
 
 with col5:
-    if st.button("📍\nLocal", use_container_width=True):
+    if st.button("📍 Local", use_container_width=True):
         st.session_state["pagina_atual"] = "📍 Localização"
 
 with col6:
-    if st.button("🔒\nAdmin", use_container_width=True):
+    if st.button("🔒 Admin", use_container_width=True):
         st.session_state["pagina_atual"] = "🔒 Área Administrativa"
 
 st.markdown('</div>', unsafe_allow_html=True)

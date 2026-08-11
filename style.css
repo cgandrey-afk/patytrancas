@@ -9,7 +9,7 @@
     font-family: 'Poppins', sans-serif !important;
 }
 
-/* Oculta elementos padrão da interface do Streamlit */
+/* Oculta elementos padrão do Streamlit */
 #MainMenu, footer, header { 
     visibility: hidden !important; 
 }
@@ -42,7 +42,7 @@ div[data-baseweb="select"] * {
     border-radius: 10px !important;
 }
 
-/* Radio buttons (Opções de estilos de trança) */
+/* Radio buttons */
 div[role="radiogroup"] label {
     background-color: #fdf8fa !important;
     border: 1px solid #f2c4ce !important;
@@ -92,21 +92,6 @@ div[role="radiogroup"] label span {
     width: 100%;
 }
 
-.custom-footer {
-    background-color: rgba(255, 255, 255, 0.92);
-    border: 1px solid #fce4ec;
-    border-radius: 16px;
-    padding: 12px;
-    text-align: center;
-    margin-top: 25px;
-    font-size: 0.8rem;
-}
-
-/* =============================================================
-   4. ESTILIZAÇÃO E REGRA DOS BOTÕES
-   ============================================================= */
-
-/* Estilo base global dos botões */
 div.stButton > button, 
 div.stFormSubmitButton > button {
     background-color: #ffffff !important;
@@ -115,7 +100,6 @@ div.stFormSubmitButton > button {
     border-radius: 14px !important;
     font-weight: 600 !important;
     transition: all 0.3s ease !important;
-    min-height: 42px !important;
 }
 
 div.stButton > button:hover,
@@ -125,17 +109,41 @@ div.stFormSubmitButton > button:hover {
     border-color: #e05297 !important;
 }
 
-/* A. Menu de Navegação Superior */
-.menu-navegacao div.stButton > button {
-    width: auto !important;
-    padding: 6px 14px !important;
-    font-size: 0.85rem !important;
-    border-radius: 20px !important;
+/* --- A. MENU PRINCIPAL (SEMPRE LADO A LADO) --- */
+.menu-navegacao {
+    width: 100% !important;
 }
 
-/* B. Container de Botões de Ação/Formulários */
-.botoes-acao, 
-.botoes-acao div.stButton, 
+/* Força as colunas do menu a ficarem na mesma linha e dividirem o espaço igualmente */
+.menu-navegacao div[data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+}
+
+.menu-navegacao div[data-testid="column"] {
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+}
+
+/* Ajusta os botões do menu para encolherem sem quebrar linha */
+.menu-navegacao div.stButton, 
+.menu-navegacao div.stButton > button {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 2px !important;
+    font-size: clamp(0.68rem, 2.2vw, 0.85rem) !important; /* Fonte diminui dinamicamente em telas menores */
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+}
+
+/* --- B. AÇÕES DE FORMULÁRIO (OCUPAM LARGURA TOTAL DO CONTAINER) --- */
+.botoes-acao div.stButton,
 .botoes-acao div.stFormSubmitButton {
     width: 100% !important;
 }
@@ -143,54 +151,21 @@ div.stFormSubmitButton > button:hover {
 .botoes-acao div.stButton > button,
 .botoes-acao div.stFormSubmitButton > button {
     width: 100% !important;
-    padding: 10px 16px !important;
+    padding: 10px 14px !important;
     font-size: 0.95rem !important;
-    white-space: normal !important;
 }
 
 /* =============================================================
-   5. ESTRUTURA DE COLUNAS DESKTOPS
-   ============================================================= */
-div[data-testid="stHorizontalBlock"] {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    gap: 12px !important;
-}
-
-div[data-testid="column"] {
-    flex: 1 1 0px !important;
-    min-width: 0 !important;
-}
-
-/* =============================================================
-   6. RESPONSIVIDADE PARA DISPOSITIVOS MÓVEIS (DISPOSITIVOS < 768px)
+   5. RESPONSIVIDADE APENAS PARA CONTEÚDO E FORMULÁRIOS
    ============================================================= */
 @media screen and (max-width: 768px) {
-    /* Ajusta espaçamento do container principal no mobile */
     .content-card, .agendamento-card {
-        padding: 16px !important;
+        padding: 14px !important;
     }
 
-    /* Permite que colunas em formulários/menus empilhem ou expandam conforme necessário */
-    div[data-testid="stHorizontalBlock"] {
-        flex-wrap: wrap !important;
-    }
-
-    /* Força os botões em telas pequenas a expandirem totalmente para facilidade do toque */
-    div.stButton, 
-    div.stFormSubmitButton,
-    div.stButton > button, 
-    div.stFormSubmitButton > button {
-        width: 100% !important;
-        display: block !important;
-        font-size: 0.9rem !important;
+    /* Botões fora do menu principal se adaptam ao toque mobile */
+    :not(.menu-navegacao) > div.stButton > button,
+    :not(.menu-navegacao) > div.stFormSubmitButton > button {
         padding: 12px 8px !important;
-    }
-
-    /* Ajuste de legendas para não quebrarem mal no mobile */
-    .subtitle-badge {
-        font-size: 0.78rem !important;
-        padding: 4px 10px !important;
     }
 }
