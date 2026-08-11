@@ -284,7 +284,7 @@ if pagina == "📖 Catálogo":
 # 🗓️ PÁGINA DE AGENDAMENTO (INTEGRADA AO FIREBASE)
 # ------------------------------------------
 elif pagina == "🗓️ Agendar":
-    agendamento.render(salvar_agendamento_fn=salvar_agendamento)
+    agendamento.render(db=db, salvar_agendamento_fn=salvar_agendamento)
     
 
 elif pagina == "📸 Trança com IA":
