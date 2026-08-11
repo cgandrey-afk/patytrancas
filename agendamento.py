@@ -3,11 +3,11 @@ from datetime import date
 
 def render(salvar_agendamento_fn):
     """
-    Renderiza a página de agendamento com estilos limpos para Selectbox e inputs.
+    Renderiza a página de agendamento de horários.
     """
     st.markdown("""
         <style>
-        /* Container Principal com fundo branco */
+        /* Container Principal */
         .agendamento-card {
             background-color: #ffffff !important;
             padding: 24px;
@@ -19,63 +19,7 @@ def render(salvar_agendamento_fn):
             width: 100%;
         }
 
-        /* Labels dos campos sempre visíveis e escuras */
-        .agendamento-card label, 
-        div[data-testid="stForm"] label,
-        div[data-testid="stForm"] label p {
-            color: #262730 !important;
-            font-weight: 600 !important;
-            font-size: 0.95rem !important;
-            margin-bottom: 6px !important;
-        }
-
-        /* Campos de Texto (Nome e WhatsApp) e Data */
-        div[data-testid="stForm"] input {
-            background-color: #fdf8fa !important;
-            color: #262730 !important;
-            border: 1.5px solid #f2c4ce !important;
-            border-radius: 10px !important;
-            min-height: 45px !important;
-            font-size: 0.95rem !important;
-        }
-
-        /* =========================================================
-           CORREÇÃO DEFINITIVA DO SELECTBOX (ESTILO E HORÁRIO)
-           ========================================================= */
-        /* Reset de todas as camadas internas do BaseWeb para não empilhar cores */
-        div[data-testid="stForm"] div[data-baseweb="select"],
-        div[data-testid="stForm"] div[data-baseweb="select"] * {
-            background-color: transparent !important;
-            box-shadow: none !important;
-        }
-
-        /* Caixa externa real do Selectbox */
-        div[data-testid="stForm"] div[data-baseweb="select"] > div {
-            background-color: #fdf8fa !important;
-            border: 1.5px solid #f2c4ce !important;
-            border-radius: 10px !important;
-            min-height: 45px !important;
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        /* Força o texto selecionado a ficar escuro e visível */
-        div[data-testid="stForm"] div[data-baseweb="select"] [data-testid="stMarkdownContainer"] p,
-        div[data-testid="stForm"] div[data-baseweb="select"] div[role="combobox"],
-        div[data-testid="stForm"] div[data-baseweb="select"] span {
-            color: #262730 !important;
-            font-size: 0.95rem !important;
-            font-weight: 500 !important;
-            -webkit-text-fill-color: #262730 !important;
-        }
-
-        /* Ícone da Seta do Select */
-        div[data-testid="stForm"] div[data-baseweb="select"] svg {
-            fill: #e05297 !important;
-            color: #e05297 !important;
-        }
-
-        /* Botão do formulário */
+        /* Botão do formulário estilizado */
         div[data-testid="stForm"] button[kind="primaryFormSubmit"],
         div[data-testid="stForm"] button {
             background-color: #e05297 !important;
@@ -88,7 +32,7 @@ def render(salvar_agendamento_fn):
             box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.25) !important;
             width: 100% !important;
             min-height: 48px !important;
-            margin-top: 10px !important;
+            margin-top: 15px !important;
             cursor: pointer;
         }
 
@@ -97,13 +41,13 @@ def render(salvar_agendamento_fn):
             color: #ffffff !important;
         }
 
-        /* --- RESPONSIVIDADE PARA CELULAR --- */
+        /* --- RESPONSIVIDADE PARA CELULAR (Empilha os campos em 100% de largura) --- */
         @media screen and (max-width: 768px) {
             .agendamento-card {
                 padding: 16px 12px !important;
             }
 
-            /* Empilha as colunas verticalmente no celular */
+            /* Força as colunas a empilharem perfeitamente na vertical */
             div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
                 display: flex !important;
                 flex-direction: column !important;
