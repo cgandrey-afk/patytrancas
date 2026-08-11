@@ -1,0 +1,132 @@
+/* =============================================================
+   1. ESTILOS GERAIS DA APLICAÇÃO E TEMAS
+   ============================================================= */
+.stApp {
+    background-color: #fdf5f8 !important;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000000' stroke-width='1.2' stroke-opacity='0.04' stroke-linecap='round'%3E%3Cpath d='M 12 0 C 22 10, 30 20, 25 30 C 20 40, 12 45, 12 50 C 22 60, 30 70, 25 80 C 20 90, 12 95, 12 100' /%3E%3Cpath d='M 15 0 C 25 10, 33 20, 28 30 C 23 40, 15 45, 15 50 C 25 60, 33 70, 28 80 C 23 90, 15 95, 15 100' /%3E%3Cpath d='M 38 0 C 28 10, 20 20, 25 30 C 30 40, 38 45, 38 50 C 28 60, 20 70, 25 80 C 30 90, 38 95, 38 100' /%3E%3Cpath d='M 35 0 C 25 10, 17 20, 22 30 C 27 40, 35 45, 35 50 C 25 60, 17 70, 22 80 C 27 90, 35 95, 35 100' /%3E%3Cpath d='M 62 0 C 72 10, 80 20, 75 30 C 70 40, 62 45, 62 50 C 72 60, 80 70, 75 80 C 70 90, 62 95, 62 100' /%3E%3Cpath d='M 65 0 C 75 10, 83 20, 78 30 C 73 40, 65 45, 65 50 C 75 60, 83 70, 78 80 C 73 90, 65 95, 65 100' /%3E%3Cpath d='M 88 0 C 78 10, 70 20, 75 30 C 80 40, 88 45, 88 50 C 78 60, 70 70, 75 80 C 80 90, 88 95, 88 100' /%3E%3Cpath d='M 85 0 C 75 10, 67 20, 72 30 C 77 40, 85 45, 85 50 C 75 60, 67 70, 72 80 C 77 90, 85 95, 85 100' /%3E%3C/g%3E%3C/svg%3E") !important;
+    background-size: 100px 100px !important;
+    background-attachment: fixed !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* Oculta elementos padrão do Streamlit */
+#MainMenu, footer, header { visibility: hidden !important; }
+
+.stAppViewMainTarget { padding-top: 0rem !important; }
+.stMainBlockContainer, div[data-testid="stAppViewBlockContainer"] {
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+}
+
+/* =============================================================
+   2. FIXAÇÃO DE COR DE TEXTO (RESOLVE TEXTO SUMINDO/BRANCO)
+   ============================================================= */
+.stApp label, 
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stWidgetLabel"] label,
+p, h1, h2, h3, h4, span {
+    color: #262730 !important;
+}
+
+/* Inputs de texto, selectbox e dropdowns */
+div[data-testid="stTextInput"] input,
+div[data-baseweb="select"] * {
+    color: #262730 !important;
+    background-color: #ffffff !important;
+    border: 1.5px solid #f2c4ce !important;
+    border-radius: 10px !important;
+}
+
+/* Radio buttons (Estilos de trança e opções) */
+div[role="radiogroup"] label {
+    background-color: #fdf8fa !important;
+    border: 1px solid #f2c4ce !important;
+    padding: 8px 14px !important;
+    border-radius: 20px !important;
+}
+
+div[role="radiogroup"] label span {
+    color: #262730 !important;
+}
+
+/* =============================================================
+   3. CABEÇALHO E CARDS
+   ============================================================= */
+.top-header {
+    text-align: center;
+    padding: 0px 0 8px 0 !important;
+    margin-top: -10px !important;
+}
+
+.top-header h1 {
+    background: linear-gradient(45deg, #e05297, #9b51e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.subtitle-badge {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #e05297 !important;
+    border: 2px solid #f2c4ce;
+    border-radius: 16px;
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.content-card, .agendamento-card {
+    background-color: #ffffff !important;
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid #f2c4ce;
+    box-shadow: 0px 6px 20px rgba(224, 82, 151, 0.08);
+    margin: 0 auto 20px auto;
+    max-width: 850px;
+    width: 100%;
+}
+
+.custom-footer {
+    background-color: rgba(255, 255, 255, 0.92);
+    border: 1px solid #fce4ec;
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+    margin-top: 25px;
+    font-size: 0.8rem;
+}
+
+/* =============================================================
+   4. BOTÕES NATIVOS DO STREAMLIT
+   ============================================================= */
+div.stButton > button {
+    width: 100% !important;
+    background-color: #ffffff !important;
+    color: #e05297 !important;
+    border: 2px solid #f2c4ce !important;
+    border-radius: 16px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+div.stButton > button:hover {
+    background-color: #e05297 !important;
+    color: #ffffff !important;
+    border-color: #e05297 !important;
+}
+
+/* =============================================================
+   5. RESPONSIVIDADE PARA CELULARES (< 768px)
+   ============================================================= */
+@media screen and (max-width: 768px) {
+    .agendamento-card, .content-card {
+        padding: 16px 12px !important;
+    }
+
+    div.stButton > button {
+        padding: 5px 1px !important;
+        font-size: 0.58rem !important;
+        min-height: 42px !important;
+    }
+}
