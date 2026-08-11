@@ -1,8 +1,22 @@
+import os
+import json
+import io
 import streamlit as st
 from google import genai
 from PIL import Image
-import json
-import io
+
+def carregar_css():
+    """Carrega o arquivo CSS externo e injeta na aplicação de forma segura."""
+    caminho_css = "style.css"
+    if os.path.exists(caminho_css):
+        try:
+            with open(caminho_css, "r", encoding="utf-8") as f:
+                st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        except Exception as e:
+            st.warning(f"Erro ao ler o arquivo style.css: {e}")
+    else:
+        st.warning("⚠️ O arquivo 'style.css' não foi encontrado na raiz do projeto. Verifique o repositório no GitHub.")
+
 
 def formatar_tempo(minutos):
     """Formata minutos no formato legível de horas e minutos."""
