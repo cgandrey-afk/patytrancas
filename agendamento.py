@@ -3,11 +3,11 @@ from datetime import date
 
 def render(salvar_agendamento_fn):
     """
-    Renderiza a página de agendamento corrigindo a renderização dos Selectboxes e inputs.
+    Renderiza a página de agendamento com estilos limpos para Selectbox e inputs.
     """
     st.markdown("""
         <style>
-        /* Container Principal com fundo branco e contorno discreto */
+        /* Container Principal com fundo branco */
         .agendamento-card {
             background-color: #ffffff !important;
             padding: 24px;
@@ -19,7 +19,7 @@ def render(salvar_agendamento_fn):
             width: 100%;
         }
 
-        /* Labels dos campos sempre visíveis e escuros */
+        /* Labels dos campos sempre visíveis e escuras */
         .agendamento-card label, 
         div[data-testid="stForm"] label,
         div[data-testid="stForm"] label p {
@@ -29,7 +29,7 @@ def render(salvar_agendamento_fn):
             margin-bottom: 6px !important;
         }
 
-        /* --- CORREÇÃO DOS CAMPOS DE TEXTO E DATA --- */
+        /* Campos de Texto (Nome e WhatsApp) e Data */
         div[data-testid="stForm"] input {
             background-color: #fdf8fa !important;
             color: #262730 !important;
@@ -39,27 +39,40 @@ def render(salvar_agendamento_fn):
             font-size: 0.95rem !important;
         }
 
-        /* --- CORREÇÃO DOS SELECTBOXES (ESTILO E HORÁRIO) --- */
-        /* Estiliza o container do SelectBox do Streamlit (BaseWeb) */
+        /* =========================================================
+           CORREÇÃO DEFINITIVA DO SELECTBOX (ESTILO E HORÁRIO)
+           ========================================================= */
+        /* Reset de todas as camadas internas do BaseWeb para não empilhar cores */
+        div[data-testid="stForm"] div[data-baseweb="select"],
+        div[data-testid="stForm"] div[data-baseweb="select"] * {
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Caixa externa real do Selectbox */
         div[data-testid="stForm"] div[data-baseweb="select"] > div {
             background-color: #fdf8fa !important;
             border: 1.5px solid #f2c4ce !important;
             border-radius: 10px !important;
             min-height: 45px !important;
-            color: #262730 !important;
+            display: flex !important;
+            align-items: center !important;
         }
 
-        /* Garante que o texto selecionado dentro do select fique preto/escuro e visível */
-        div[data-testid="stForm"] div[data-baseweb="select"] span,
-        div[data-testid="stForm"] div[data-baseweb="select"] div {
+        /* Força o texto selecionado a ficar escuro e visível */
+        div[data-testid="stForm"] div[data-baseweb="select"] [data-testid="stMarkdownContainer"] p,
+        div[data-testid="stForm"] div[data-baseweb="select"] div[role="combobox"],
+        div[data-testid="stForm"] div[data-baseweb="select"] span {
             color: #262730 !important;
             font-size: 0.95rem !important;
             font-weight: 500 !important;
+            -webkit-text-fill-color: #262730 !important;
         }
 
         /* Ícone da Seta do Select */
         div[data-testid="stForm"] div[data-baseweb="select"] svg {
             fill: #e05297 !important;
+            color: #e05297 !important;
         }
 
         /* Botão do formulário */
@@ -90,7 +103,7 @@ def render(salvar_agendamento_fn):
                 padding: 16px 12px !important;
             }
 
-            /* Empilha as colunas verticalmente no celular sem espremer */
+            /* Empilha as colunas verticalmente no celular */
             div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
                 display: flex !important;
                 flex-direction: column !important;
