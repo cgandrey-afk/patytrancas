@@ -20,7 +20,7 @@ def inicializar_firebase():
 
         cred = credentials.Certificate(firebase_secrets)
         firebase_admin.initialize_app(cred)
-    
+        
     return firestore.client()
 
 # Instância global do banco de dados
@@ -100,41 +100,43 @@ st.markdown("""
 
 
 # ==========================================
-# 3. MENU DE NAVEGAÇÃO (ISOLADO VIA CSS)
+# 3. MENU DE NAVEGAÇÃO RESPONSIVO (DESKTOP & MOBILE)
 # ==========================================
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# Envolve o menu na div com a classe para controlar o tamanho dos botões
-st.markdown('<div class="menu-navegacao">', unsafe_allow_html=True)
+# Mapeamento do menu: rótulo do botão -> valor da página no session_state
+opcoes_menu = {
+    "📖 Catálogo": "📖 Catálogo",
+    "🗓️ Agendar": "🗓️ Agendar",
+    "📸 Com IA": "📸 Trança com IA",
+    "🖼️ Galeria": "🖼️ Meus Trabalhos",
+    "📍 Local": "📍 Localização",
+    "🔒 Admin": "🔒 Área Administrativa"
+}
 
-# 6 colunas iguais para os botões do menu
+# --- A. VERSÃO DESKTOP (Botões nas 6 colunas - Visível em telas > 768px) ---
+st.markdown('<div class="menu-desktop">', unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
-with col1:
-    if st.button("📖 Catálogo", use_container_width=True):
-        st.session_state["pagina_atual"] = "📖 Catálogo"
+for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opcoes_menu.items()):
+    with col:
+        if st.button(label, key=f"btn_desk_{label}", use_container_width=True):
+            st.session_state["pagina_atual"] = pagina_target
+            st.rerun()
+st.markdown('</div>', unsafe_allow_html=True)
 
-with col2:
-    if st.button("🗓️ Agendar", use_container_width=True):
-        st.session_state["pagina_atual"] = "🗓️ Agendar"
-
-with col3:
-    if st.button("📸 Com IA", use_container_width=True):
-        st.session_state["pagina_atual"] = "📸 Trança com IA"
-
-with col4:
-    if st.button("🖼️ Galeria", use_container_width=True):
-        st.session_state["pagina_atual"] = "🖼️ Meus Trabalhos"
-
-with col5:
-    if st.button("📍 Local", use_container_width=True):
-        st.session_state["pagina_atual"] = "📍 Localização"
-
-with col6:
-    if st.button("🔒 Admin", use_container_width=True):
-        st.session_state["pagina_atual"] = "🔒 Área Administrativa"
-
+# --- B. VERSÃO MOBILE (Expander "≡ MENU" - Visível em telas <= 768px) ---
+st.markdown('<div class="menu-mobile">', unsafe_allow_html=True)
+with st.expander("≡ MENU DE NAVEGAÇÃO", expanded=False):
+    for label, pagina_target in opcoes_menu.items():
+        # Destaque visual da página selecionada
+        is_active = (st.session_state["pagina_atual"] == pagina_target)
+        prefixo = "➔ " if is_active else ""
+        
+        if st.button(f"{prefixo}{label}", key=f"btn_mob_{label}", use_container_width=True):
+            st.session_state["pagina_atual"] = pagina_target
+            st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
