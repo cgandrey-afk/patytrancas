@@ -3,42 +3,47 @@ from datetime import date
 
 def render(salvar_agendamento_fn):
     """
-    Renderiza a página de agendamento de horários com cores fixas e layout responsivo.
+    Renderiza a página de agendamento com layout auto-ajustável e responsivo para telas pequenas.
     """
     st.markdown("""
         <style>
-        /* Container principal com fundo branco e texto escuro */
+        /* Container Principal */
         .agendamento-card {
             background-color: #ffffff !important;
-            padding: 20px;
-            border-radius: 18px;
+            padding: 24px;
+            border-radius: 20px;
             border: 1px solid #f2c4ce;
-            box-shadow: 0px 4px 15px rgba(224, 82, 151, 0.08);
-            margin-bottom: 20px;
+            box-shadow: 0px 6px 20px rgba(224, 82, 151, 0.08);
+            margin: 0 auto 20px auto;
+            max-width: 900px; /* Evita que no PC fique gigante esticado */
+            width: 100%;
         }
 
-        /* Força todas as labels (textos acima dos inputs) a ficarem escuras e visíveis */
+        /* Labels visíveis e legíveis */
         .agendamento-card label, 
         div[data-testid="stForm"] label,
         div[data-testid="stForm"] label p {
             color: #262730 !important;
             font-weight: 600 !important;
-            font-size: 0.9rem !important;
+            font-size: 0.95rem !important;
+            margin-bottom: 4px !important;
         }
 
-        /* Estilização dos Inputs (Caixas de texto, Selects, DatePicker) */
+        /* Estilização e altura confortável dos Inputs */
         div[data-testid="stForm"] input, 
         div[data-testid="stForm"] select,
         div[data-testid="stForm"] div[role="combobox"] {
             background-color: #fdf8fa !important;
             color: #262730 !important;
-            border: 1px solid #f2c4ce !important;
-            border-radius: 10px !important;
+            border: 1.5px solid #f2c4ce !important;
+            border-radius: 12px !important;
+            min-height: 45px !important; /* Altura ideal para toque no celular */
+            font-size: 0.95rem !important;
         }
 
-        /* Texto dentro do input selecionado */
-        div[data-testid="stForm"] input::placeholder {
-            color: #888888 !important;
+        div[data-testid="stForm"] input:focus {
+            border-color: #e05297 !important;
+            box-shadow: 0 0 0 2px rgba(224, 82, 151, 0.2) !important;
         }
 
         /* Botão do formulário */
@@ -47,12 +52,14 @@ def render(salvar_agendamento_fn):
             background-color: #e05297 !important;
             color: #ffffff !important;
             border: none !important;
-            border-radius: 12px !important;
-            padding: 10px 20px !important;
+            border-radius: 14px !important;
+            padding: 12px 20px !important;
             font-weight: 700 !important;
-            font-size: 0.95rem !important;
-            box-shadow: 0px 4px 10px rgba(224, 82, 151, 0.2) !important;
+            font-size: 1rem !important;
+            box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.25) !important;
             width: 100% !important;
+            min-height: 48px !important;
+            cursor: pointer;
         }
 
         div[data-testid="stForm"] button:hover {
@@ -60,25 +67,37 @@ def render(salvar_agendamento_fn):
             color: #ffffff !important;
         }
 
-        /* RESPONSIVIDADE PARA CELULAR (Telas pequenas) */
+        /* ==========================================
+           RESPONSIVIDADE / ADAPTAÇÃO PARA CELULAR
+           ========================================== */
         @media screen and (max-width: 768px) {
             .agendamento-card {
-                padding: 12px !important;
+                padding: 16px 12px !important;
+                border-radius: 16px !important;
             }
 
-            /* Desfaz a divisão de colunas e empilha tudo verticalmente */
+            /* Força TODOS os blocos horizontais do formulário a virarem linha vertical */
             div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 10px !important;
+                gap: 14px !important;
                 width: 100% !important;
             }
 
-            div[data-testid="stForm"] div[data-testid="column"] {
+            /* Força cada coluna a ocupar 100% da largura da tela */
+            div[data-testid="stForm"] div[data-testid="column"],
+            div[data-testid="stForm"] div[data-testid="stColumn"] {
                 width: 100% !important;
                 flex: 1 1 100% !important;
                 min-width: 100% !important;
+                max-width: 100% !important;
                 padding: 0 !important;
+            }
+
+            /* Garante que os inputs preencham toda a largura disponível */
+            div[data-testid="stForm"] div[data-baseweb="input"],
+            div[data-testid="stForm"] div[data-baseweb="select"] {
+                width: 100% !important;
             }
         }
         </style>
@@ -87,13 +106,13 @@ def render(salvar_agendamento_fn):
     st.markdown('<div class="agendamento-card">', unsafe_allow_html=True)
     
     st.markdown('<h3 style="color: #e05297; margin-bottom: 5px; margin-top: 0; text-align: center;">🗓️ Agende seu Horário</h3>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #555555; font-size: 0.88rem; text-align: center; margin-bottom: 15px;">Preencha os dados abaixo para enviar sua solicitação de agendamento.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #555555; font-size: 0.88rem; text-align: center; margin-bottom: 20px;">Preencha os dados abaixo para enviar sua solicitação de agendamento.</p>', unsafe_allow_html=True)
 
     with st.form("form_agendamento_cliente", border=False):
         col_f1, col_f2 = st.columns(2)
         
         with col_f1:
-            nome_cliente = st.text_input("Seu Nome Completo:", placeholder="Digite seu nome")
+            nome_cliente = st.text_input("Seu Nome Completo:", placeholder="Digite seu nome completo")
             servico_escolhido = st.selectbox("Escolha o Estilo de Trança:", [
                 "Tranças Box Braids",
                 "Nagô Desenhada / Lateral",
@@ -113,7 +132,7 @@ def render(salvar_agendamento_fn):
             with c_h:
                 horario_atendimento = st.selectbox("Horário:", ["08:00", "09:00", "10:30", "13:00", "14:30", "16:00"])
 
-        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
         btn_enviar = st.form_submit_button("✨ Confirmar Solicitação de Agendamento")
 
         if btn_enviar:
