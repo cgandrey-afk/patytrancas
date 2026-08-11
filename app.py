@@ -114,8 +114,8 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# --- A. MENU DESKTOP (Injetado dentro de container específico) ---
-st.markdown('<div class="menu-desktop-target">', unsafe_allow_html=True)
+# --- A. MENU DESKTOP ---
+st.markdown('<div class="menu-desktop-container">', unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opcoes_menu.items()):
@@ -125,8 +125,8 @@ for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opc
             st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- B. MENU MOBILE (Injetado dentro de container específico) ---
-st.markdown('<div class="menu-mobile-target">', unsafe_allow_html=True)
+# --- B. MENU MOBILE ---
+st.markdown('<div class="menu-mobile-container">', unsafe_allow_html=True)
 with st.expander("≡ MENU DE NAVEGAÇÃO", expanded=False):
     for label, pagina_target in opcoes_menu.items():
         is_active = (st.session_state["pagina_atual"] == pagina_target)
@@ -138,7 +138,6 @@ with st.expander("≡ MENU DE NAVEGAÇÃO", expanded=False):
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
-
 
 # ==========================================
 # 4. RENDERIZAÇÃO DAS PÁGINAS

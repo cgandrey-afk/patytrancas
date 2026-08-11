@@ -114,39 +114,37 @@ div.stFormSubmitButton > button:hover {
     border-color: #e05297 !important;
 }
 
-/* --- VISIBILIDADES PADRÃO (DESKTOP: TELAS > 768px) --- */
-.menu-desktop {
+/* --- VISIBILIDADE PADRÃO (DESKTOP: TELAS > 768px) --- */
+
+/* Exibe o Menu Desktop e formata o grid */
+div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] {
     display: block !important;
-    width: 100% !important;
 }
 
-.menu-mobile {
-    display: none !important; /* Esconde o Expander no PC */
-}
-
-/* Formatação do Menu Horizontal no PC */
-.menu-desktop div[data-testid="stHorizontalBlock"] {
+div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div[data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 4px !important;
 }
 
-.menu-desktop div[data-testid="column"] {
+div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div[data-testid="column"] {
     flex: 1 1 0px !important;
     min-width: 0 !important;
 }
 
-.menu-desktop div.stButton, 
-.menu-desktop div.stButton > button {
+div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] div.stButton > button {
     width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
     padding: 6px 2px !important;
     font-size: clamp(0.68rem, 2.2vw, 0.85rem) !important;
     border-radius: 12px !important;
     white-space: nowrap !important;
+}
+
+/* Esconde o Expander Mobile no PC */
+div[data-testid="element-container"]:has(.menu-mobile-container),
+div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] {
+    display: none !important;
 }
 
 /* --- BOTOES DE AÇÃO / FORMULÁRIO --- */
@@ -168,39 +166,40 @@ div.stFormSubmitButton > button:hover {
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. ESCONDE TOTALMENTE O MENU HORIZONTAL NO CELULAR */
-    .menu-desktop,
-    .menu-desktop * {
+    /* 1. ESCONDE TOTALMENTE O MENU DESKTOP NO CELULAR */
+    div[data-testid="element-container"]:has(.menu-desktop-container),
+    div[data-testid="element-container"]:has(.menu-desktop-container) + div[data-testid="element-container"] {
         display: none !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        height: 0px !important;
+        margin: 0px !important;
+        padding: 0px !important;
         visibility: hidden !important;
     }
 
-    /* 2. EXIBE O BOTÃO MENU (EXPANDER) NO CELULAR */
-    .menu-mobile {
+    /* 2. EXIBE O MENU EXPANDER NO CELULAR */
+    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] {
         display: block !important;
+        visibility: visible !important;
         margin-bottom: 10px !important;
     }
 
-    /* Estilização do Botão/Caixa do Menu Mobile */
-    .menu-mobile div[data-testid="stExpander"] {
+    /* Estilização da caixa do Expander no Mobile */
+    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div[data-testid="stExpander"] {
         border: 2px solid #f2c4ce !important;
         background-color: #ffffff !important;
         border-radius: 14px !important;
         box-shadow: 0px 4px 12px rgba(224, 82, 151, 0.08) !important;
     }
 
-    .menu-mobile summary {
+    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] summary {
         color: #e05297 !important;
         font-weight: 700 !important;
         font-size: 0.95rem !important;
         padding: 10px 14px !important;
     }
 
-    /* Botões verticais que aparecem ao clicar em "≡ MENU DE NAVEGAÇÃO" */
-    .menu-mobile div.stButton > button {
+    /* Botões empilhados verticalmente dentro do expander */
+    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
         padding: 10px 16px !important;
@@ -212,7 +211,7 @@ div.stFormSubmitButton > button:hover {
         justify-content: flex-start !important;
     }
 
-    .menu-mobile div.stButton > button:hover {
+    div[data-testid="element-container"]:has(.menu-mobile-container) + div[data-testid="element-container"] div.stButton > button:hover {
         background-color: #e05297 !important;
         color: #ffffff !important;
     }
