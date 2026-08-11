@@ -82,7 +82,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Carrega o CSS global centralizado (substitui o antigo bloco <style>)
+# Carrega o CSS global centralizado
 utils.carregar_css()
 
 
@@ -100,11 +100,13 @@ st.markdown("""
 
 
 # ==========================================
-# 3. MENU DE NAVEGAÇÃO
+# 3. MENU DE NAVEGAÇÃO (ISOLADO VIA CSS)
 # ==========================================
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
+# Envolve o menu na div com a classe para controlar o tamanho dos botões
+st.markdown('<div class="menu-navegacao">', unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
@@ -130,6 +132,8 @@ with col5:
 with col6:
     if st.button("🔒\nAdmin", use_container_width=True):
         st.session_state["pagina_atual"] = "🔒 Área Administrativa"
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
@@ -171,7 +175,10 @@ elif pagina == "📸 Trança com IA":
                 st.image(upload_foto, caption="Foto enviada", use_container_width=True)
 
             with col2:
+                # Isola o botão de ação para ocupar a largura correta
+                st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
                 btn_analisar = st.button("🔍 Analisar Penteado com IA", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
                 if btn_analisar:
                     with st.spinner("Analisando complexidade e estimando o tempo..."):

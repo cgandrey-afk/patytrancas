@@ -5,92 +5,6 @@ def render(db, salvar_agendamento_fn):
     """
     Renderiza a página de agendamento 100% dinâmica sincronizada com o banco de dados.
     """
-    st.markdown("""
-        <style>
-        /* Container Principal */
-        .agendamento-card {
-            background-color: #ffffff !important;
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid #f2c4ce;
-            box-shadow: 0px 6px 20px rgba(224, 82, 151, 0.08);
-            margin: 0 auto 20px auto;
-            max-width: 850px;
-            width: 100%;
-        }
-
-        /* Estilo dos Labels */
-        .agendamento-card label {
-            color: #262730 !important;
-            font-weight: 600 !important;
-            font-size: 0.95rem !important;
-        }
-
-        /* Estilo dos Inputs */
-        div[data-testid="stTextInput"] input {
-            background-color: #ffffff !important;
-            color: #262730 !important;
-            border: 1.5px solid #f2c4ce !important;
-            border-radius: 10px !important;
-            min-height: 45px !important;
-        }
-
-        /* Botões de Seleção de Dia Livre (Rosa) */
-        .btn-data-disponivel button {
-            background-color: #e05297 !important;
-            color: #ffffff !important;
-            border-radius: 12px !important;
-            border: none !important;
-            font-weight: bold !important;
-            padding: 10px !important;
-            width: 100% !important;
-        }
-
-        /* Indicador de Dia Indisponível (Cinza) */
-        .dia-indisponivel {
-            background-color: #f0f0f0;
-            color: #a0a0a0;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* Radio Buttons estilo Chips/Pills (Horários e Serviços) */
-        div[role="radiogroup"] {
-            gap: 8px !important;
-        }
-        
-        div[role="radiogroup"] label {
-            background-color: #fdf8fa !important;
-            border: 1px solid #f2c4ce !important;
-            padding: 8px 14px !important;
-            border-radius: 20px !important;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        div[role="radiogroup"] label:hover {
-            border-color: #e05297 !important;
-            background-color: #fce8f0 !important;
-        }
-
-        /* Botão Principal */
-        div.stButton > button[kind="primary"], div.stButton > button {
-            border-radius: 12px !important;
-        }
-
-        /* Responsividade em Telas Pequenas */
-        @media screen and (max-width: 768px) {
-            .agendamento-card {
-                padding: 16px 12px !important;
-            }
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
     st.markdown('<div class="agendamento-card">', unsafe_allow_html=True)
     
     st.markdown('<h3 style="color: #e05297; margin-bottom: 5px; margin-top: 0; text-align: center;">🗓️ Agende seu Horário</h3>', unsafe_allow_html=True)
@@ -127,7 +41,6 @@ def render(db, salvar_agendamento_fn):
             data_formatada = data_obj.strftime("%d/%m")
             
             with col:
-                st.markdown('<div class="btn-data-disponivel">', unsafe_allow_html=True)
                 btn_label = f"🌸 {data_formatada}"
                 
                 # Se for a data atualmente selecionada, dá destaque
@@ -137,7 +50,6 @@ def render(db, salvar_agendamento_fn):
                 if st.button(btn_label, key=f"btn_data_{d_str}", use_container_width=True):
                     st.session_state["data_selecionada"] = d_str
                     st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("Nenhuma data aberta para agendamento no momento. Por favor, consulte novamente mais tarde!")
 
@@ -182,7 +94,10 @@ def render(db, salvar_agendamento_fn):
                 horizontal=True
             )
 
+            # Isola o botão com a classe de ação definida no CSS
+            st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
             btn_enviar = st.form_submit_button("✨ Confirmar Agendamento", use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
             if btn_enviar:
                 if not nome_cliente or not telefone_cliente:
@@ -197,7 +112,7 @@ def render(db, salvar_agendamento_fn):
                         horario_atendimento
                     )
                     
-                    # Opcional: Remove o horário agendado da lista de horários disponíveis
+                    # Remove o horário agendado da lista de horários disponíveis
                     horarios_restantes = [h for h in horarios_livres if h != horario_atendimento]
                     if horarios_restantes:
                         db.collection("agenda").document(data_sel).update({

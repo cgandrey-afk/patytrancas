@@ -4,57 +4,6 @@ from datetime import datetime
 
 def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendamento_fn):
     # -------------------------------------------------------------
-    # CSS DEDICADO: RESPONSIVIDADE E ESTILIZAÇÃO DO ADMIN
-    # -------------------------------------------------------------
-    st.markdown("""
-        <style>
-        /* Força fundo branco em formulários, caixas, abas e inputs */
-        [data-testid="stForm"], 
-        [data-testid="stVerticalBlockBorderWrapper"],
-        div[data-baseweb="tab-list"],
-        div[data-baseweb="tab-panel"] {
-            background-color: #ffffff !important;
-            border-radius: 12px !important;
-        }
-        
-        /* Ajusta o contraste dos rótulos e textos */
-        .stMarkdown, label, p, h1, h2, h3, h4 {
-            color: #262626 !important;
-        }
-        
-        /* Destaque rosa nos títulos de seção */
-        .admin-title {
-            color: #e05297 !important;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        /* Estilização dos botões para preenchimento total e alinhamento */
-        div.stButton > button {
-            width: 100% !important;
-            border-radius: 10px !important;
-            font-weight: 600 !important;
-        }
-
-        /* AJUSTE RESPONSIVO PARA SMARTPHONES (TELAS < 768px) */
-        @media screen and (max-width: 768px) {
-            /* Faz com que colunas de ações fiquem em bloco ou empilhadas de forma limpa */
-            .admin-actions-container {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 10px !important;
-            }
-            
-            /* Ajuste de margem dos botões em telas pequenas */
-            div[data-testid="stColumn"] {
-                width: 100% !important;
-                margin-bottom: 5px !important;
-            }
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # -------------------------------------------------------------
     # CONTAINER PRINCIPAL NATIVO (CAIXA BRANCA COM BORDA)
     # -------------------------------------------------------------
     with st.container(border=True):
@@ -71,7 +20,10 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
             
             with st.form("form_login_admin"):
                 senha = st.text_input("Senha de acesso:", type="password")
+                
+                st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
                 btn_entrar = st.form_submit_button("Entrar no Painel", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
                 
                 if btn_entrar:
                     if senha == "12345":
@@ -174,7 +126,11 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                     preco = st.text_input("Preço Estimado (ex: R$ 150,00)")
                     imagem = st.file_uploader("Foto da Trança", type=["jpg", "jpeg", "png"])
                     
-                    if st.form_submit_button("Salvar Trança", use_container_width=True):
+                    st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
+                    btn_salvar_tranca = st.form_submit_button("Salvar Trança", use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+                    if btn_salvar_tranca:
                         if nome and preco:
                             db.collection("catalogo").add({
                                 "nome": nome,
@@ -187,12 +143,11 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                             st.error("Preencha o nome e o preço antes de salvar.")
 
             # -----------------------------------------------------------
-            # ABA 3: Gerenciar Horários (Subdividido em 3 ações)
+            # ABA 3: Gerenciar Horários
             # -----------------------------------------------------------
             with tab3:
                 st.write("### 📅 Gestão de Horários e Agenda")
                 
-                # Sub-menu interno para navegar entre as funções de agenda
                 sub_tab1, sub_tab2, sub_tab3 = st.tabs([
                     "🔓 Abrir Agenda", 
                     "⚙️ Gerenciar Agenda", 
@@ -212,12 +167,13 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                             placeholder="ex: 08:00, 10:00, 14:00"
                         )
                         
+                        st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
                         btn_salvar_agenda = st.form_submit_button("💾 Salvar Horários na Agenda", use_container_width=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
                         
                         if btn_salvar_agenda:
                             lista_h = [h.strip() for h in horarios_texto.split(",") if h.strip()]
                             if lista_h:
-                                # Salva na coleção 'agenda' usando a data como ID do documento
                                 db.collection("agenda").document(str(data_abrir)).set({
                                     "data": str(data_abrir),
                                     "horarios_disponiveis": lista_h,
@@ -237,9 +193,6 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                         lista_agenda = [doc.to_dict() for doc in docs_agenda]
                         
                         if lista_agenda:
-                            df_agenda = pd.DataFrame(lista_agenda)
-                            
-                            # Formata exibição
                             for item in lista_agenda:
                                 data_str = item.get("data", "")
                                 horarios_arr = item.get("horarios_disponiveis", [])
@@ -256,7 +209,7 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                     except Exception as e:
                         st.error(f"Erro ao carregar dados da agenda: {e}")
 
-                # --- SUB-ABA 3: AGENDAR CLIENTE ---
+                # --- SUB-ABA 3: AGENDAR CLIENTE MANUAL ---
                 with sub_tab3:
                     st.write("#### ➕ Inserir Agendamento Manual (WhatsApp/Presencial)")
                     st.caption("Use esta opção quando a cliente fechar o agendamento diretamente com você.")
@@ -273,11 +226,12 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                             horario_manual = st.text_input("Horário Combinado:", placeholder="ex: 09:00")
                             status_manual = st.selectbox("Status Inicial:", ["Confirmado", "Pendente"])
 
+                        st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
                         btn_salvar_manual = st.form_submit_button("📌 Confirmar Agendamento Manual", use_container_width=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
                         
                         if btn_salvar_manual:
                             if nome_manual and tel_manual:
-                                # Insere diretamente no banco na coleção 'agendamentos'
                                 db.collection("agendamentos").add({
                                     "cliente_nome": nome_manual,
                                     "cliente_telefone": tel_manual,
