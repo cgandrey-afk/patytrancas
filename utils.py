@@ -3,7 +3,6 @@ import json
 import io
 import streamlit as st
 from google import genai
-from google.genai import types
 from PIL import Image
 
 def carregar_css():
@@ -21,11 +20,6 @@ def carregar_css():
 
 def formatar_tempo(minutos):
     """Formata minutos no formato legível de horas e minutos."""
-    try:
-        minutos = int(minutos)
-    except (ValueError, TypeError):
-        return "Tempo a definir"
-        
     horas = minutos // 60
     min_restantes = minutos % 60
     if horas > 0 and min_restantes > 0:
@@ -34,9 +28,8 @@ def formatar_tempo(minutos):
         return f"{horas}h"
     return f"{min_restantes}min"
 
-
 def analisar_imagem_com_gemini(imagem_upload):
-    """Envia a imagem para a API Gemini e retorna a estimativa de tempo e complexidade em JSON."""
+    """Envia a imagem para a API Gemini e retorna a estimativa de tempo e complexidade."""
     try:
         # 1. Chave e Cliente da SDK oficial
         api_key = st.secrets["gemini"]["api_key"]
@@ -74,7 +67,7 @@ def analisar_imagem_com_gemini(imagem_upload):
            - Observe a curvatura do cabelo nas raízes e pontas (Liso vs. Cacheado/Crespo).
            - Identifique se há desenhos elaborados (corações, cruzamentos, formas geométricas) que exigem simetria rigorosa.
 
-        Retorne ESTRITAMENTE um objeto JSON no seguinte formato:
+        Retorne ESTRITAMENTE um objeto JSON no seguinte formato (sem marcações markdown adicionais):
         {
           "estilo_identificado": "Nagô Topo com Desenho Geométrico/Coração e Acessórios",
           "dificuldade": "Alta",
@@ -83,26 +76,35 @@ def analisar_imagem_com_gemini(imagem_upload):
         }
         """
 
-        # Modelos recomendados em ordem de preferência
-        modelos_fallback = [
-            'gemini-2.5-flash',
-            'gemini-2.0-flash'
-        ]
+        # 3. Descobre dinamicamente os modelos ativos na sua chave de API
+        modelos_disponiveis = []
+        try:
+            for m in client.models.list():
+                # Filtra apenas modelos que suportam generateContent
+                if hasattr(m, 'supported_actions') and 'generateContent' in m.supported_actions:
+                    nome_limpo = m.name.replace("models/", "")
+                    modelos_disponiveis.append(nome_limpo)
+        except Exception:
+            pass
+
+        # Lista de fallback caso a listagem dinâmica falhe
+        if not modelos_disponiveis:
+            modelos_disponiveis = [
+                'gemini-2.5-flash',
+                'gemini-2.0-flash'
+            ]
 
         response = None
         ultimo_erro = None
 
-        # Configuração para forçar resposta em JSON puro
-        config_geracao = types.GenerateContentConfig(
-            response_mime_type="application/json"
-        )
-
-        for modelo_nome in modelos_fallback:
+        for modelo_nome in modelos_disponiveis:
+            # Pula modelos experimentais ou de embeddings se existirem na lista
+            if "embedding" in modelo_nome or "imagen" in modelo_nome:
+                continue
             try:
                 response = client.models.generate_content(
                     model=modelo_nome,
-                    contents=[prompt, imagem_pil],
-                    config=config_geracao
+                    contents=[prompt, imagem_pil]
                 )
                 if response and response.text and response.text.strip():
                     break
@@ -115,7 +117,7 @@ def analisar_imagem_com_gemini(imagem_upload):
 
         texto_resultado = response.text.strip()
 
-        # Limpeza preventiva caso haja blocos de código Markdown
+        # Limpa blocos de formatação markdown caso a IA inclua ```json ... ```
         if texto_resultado.startswith("```"):
             lines = texto_resultado.splitlines()
             if lines[0].startswith("```"):
