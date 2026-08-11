@@ -100,12 +100,11 @@ st.markdown("""
 
 
 # ==========================================
-# 3. MENU DE NAVEGAÇÃO RESPONSIVO (DESKTOP & MOBILE)
+# 3. MENU DE NAVEGAÇÃO RESPONSIVO
 # ==========================================
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
 
-# Mapeamento do menu: rótulo do botão -> valor da página no session_state
 opcoes_menu = {
     "📖 Catálogo": "📖 Catálogo",
     "🗓️ Agendar": "🗓️ Agendar",
@@ -115,8 +114,8 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# --- A. VERSÃO DESKTOP (Botões nas 6 colunas - Visível em telas > 768px) ---
-st.markdown('<div class="menu-desktop">', unsafe_allow_html=True)
+# --- A. MENU DESKTOP (Injetado dentro de container específico) ---
+st.markdown('<div class="menu-desktop-target">', unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opcoes_menu.items()):
@@ -126,11 +125,10 @@ for col, (label, pagina_target) in zip([col1, col2, col3, col4, col5, col6], opc
             st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- B. VERSÃO MOBILE (Expander "≡ MENU" - Visível em telas <= 768px) ---
-st.markdown('<div class="menu-mobile">', unsafe_allow_html=True)
+# --- B. MENU MOBILE (Injetado dentro de container específico) ---
+st.markdown('<div class="menu-mobile-target">', unsafe_allow_html=True)
 with st.expander("≡ MENU DE NAVEGAÇÃO", expanded=False):
     for label, pagina_target in opcoes_menu.items():
-        # Destaque visual da página selecionada
         is_active = (st.session_state["pagina_atual"] == pagina_target)
         prefixo = "➔ " if is_active else ""
         
@@ -155,9 +153,6 @@ if pagina == "📖 Catálogo":
         </div>
     """, unsafe_allow_html=True)
 
-# ------------------------------------------
-# 🗓️ PÁGINA DE AGENDAMENTO (INTEGRADA AO FIREBASE)
-# ------------------------------------------
 elif pagina == "🗓️ Agendar":
     agendamento.render(db=db, salvar_agendamento_fn=salvar_agendamento)
 
@@ -179,7 +174,6 @@ elif pagina == "📸 Trança com IA":
                 st.image(upload_foto, caption="Foto enviada", use_container_width=True)
 
             with col2:
-                # Isola o botão de ação para ocupar a largura correta
                 st.markdown('<div class="botoes-acao">', unsafe_allow_html=True)
                 btn_analisar = st.button("🔍 Analisar Penteado com IA", use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
@@ -190,14 +184,12 @@ elif pagina == "📸 Trança com IA":
 
                     if resultado:
                         st.success("Análise concluída!")
-                        
                         st.markdown(f"**Estilo Identificado:** {resultado.get('estilo_identificado', 'N/A')}")
                         st.markdown(f"**Dificuldade:** `{resultado.get('dificuldade', 'N/A')}`")
                         
                         tempo_min = resultado.get('tempo_estimado_minutos', 0)
                         tempo_formatado = utils.formatar_tempo(tempo_min)
                         st.markdown(f"⏱️ **Tempo Estimado:** `{tempo_formatado}`")
-                        
                         st.info(f"💡 **Observação da IA:**\n{resultado.get('observacao', '')}")
 
 elif pagina == "🖼️ Meus Trabalhos":
