@@ -187,18 +187,107 @@ def render(db, carregar_agendamentos_fn, atualizar_status_fn, deletar_agendament
                             st.error("Preencha o nome e o preço antes de salvar.")
 
             # -----------------------------------------------------------
-            # ABA 3: Gerenciar Horários
+            # ABA 3: Gerenciar Horários (Subdividido em 3 ações)
             # -----------------------------------------------------------
             with tab3:
-                st.write("### 📅 Gerenciar Horários Livres")
-                with st.form("form_horarios_livres"):
-                    data_trabalho = st.date_input("Data do Expediente")
-                    horarios = st.text_input("Horários disponíveis (separados por vírgula)", value="08:00, 13:00, 17:00")
+                st.write("### 📅 Gestão de Horários e Agenda")
+                
+                # Sub-menu interno para navegar entre as funções de agenda
+                sub_tab1, sub_tab2, sub_tab3 = st.tabs([
+                    "🔓 Abrir Agenda", 
+                    "⚙️ Gerenciar Agenda", 
+                    "➕ Agendar Cliente"
+                ])
+
+                # --- SUB-ABA 1: ABRIR AGENDA ---
+                with sub_tab1:
+                    st.write("#### 🔓 Abrir Horários para uma Data")
+                    st.caption("Cadastre os horários livres em que você atenderá neste dia.")
                     
-                    if st.form_submit_button("Atualizar Agenda", use_container_width=True):
-                        lista_horarios = [h.strip() for h in horarios.split(",") if h.strip()]
-                        db.collection("agenda").document(str(data_trabalho)).set({
-                            "data": str(data_trabalho),
-                            "horarios_disponiveis": lista_horarios
-                        })
-                        st.success(f"Agenda para {data_trabalho} atualizada com sucesso!")
+                    with st.form("form_abrir_agenda"):
+                        data_abrir = st.date_input("Data do Expediente:", key="data_abrir_agenda")
+                        horarios_texto = st.text_input(
+                            "Horários disponíveis (separados por vírgula):", 
+                            value="08:00, 09:30, 11:00, 13:30, 15:00, 16:30",
+                            placeholder="ex: 08:00, 10:00, 14:00"
+                        )
+                        
+                        btn_salvar_agenda = st.form_submit_button("💾 Salvar Horários na Agenda", use_container_width=True)
+                        
+                        if btn_salvar_agenda:
+                            lista_h = [h.strip() for h in horarios_texto.split(",") if h.strip()]
+                            if lista_h:
+                                # Salva na coleção 'agenda' usando a data como ID do documento
+                                db.collection("agenda").document(str(data_abrir)).set({
+                                    "data": str(data_abrir),
+                                    "horarios_disponiveis": lista_h,
+                                    "atualizado_em": datetime.now().strftime("%Y-%m-%d %H:%M")
+                                })
+                                st.success(f"Agenda para {data_abrir.strftime('%d/%m/%Y')} aberta com sucesso com {len(lista_h)} horários!")
+                            else:
+                                st.error("Insira pelo menos um horário válido.")
+
+                # --- SUB-ABA 2: GERENCIAR AGENDA ---
+                with sub_tab2:
+                    st.write("#### ⚙️ Dias com Agenda Aberta")
+                    st.caption("Consulte os horários configurados no banco e remova/bloqueie datas se necessário.")
+                    
+                    try:
+                        docs_agenda = db.collection("agenda").stream()
+                        lista_agenda = [doc.to_dict() for doc in docs_agenda]
+                        
+                        if lista_agenda:
+                            df_agenda = pd.DataFrame(lista_agenda)
+                            
+                            # Formata exibição
+                            for item in lista_agenda:
+                                data_str = item.get("data", "")
+                                horarios_arr = item.get("horarios_disponiveis", [])
+                                horarios_str = ", ".join(horarios_arr) if horarios_arr else "Nenhum horário livre"
+                                
+                                with st.expander(f"📅 Data: {data_str} ({len(horarios_arr)} horários)"):
+                                    st.write(f"**Horários cadastrados:** `{horarios_str}`")
+                                    if st.button(f"🗑️ Excluir Agenda de {data_str}", key=f"del_agenda_{data_str}"):
+                                        db.collection("agenda").document(data_str).delete()
+                                        st.warning(f"Agenda do dia {data_str} removida!")
+                                        st.rerun()
+                        else:
+                            st.info("Nenhuma data foi configurada na agenda ainda.")
+                    except Exception as e:
+                        st.error(f"Erro ao carregar dados da agenda: {e}")
+
+                # --- SUB-ABA 3: AGENDAR CLIENTE ---
+                with sub_tab3:
+                    st.write("#### ➕ Inserir Agendamento Manual (WhatsApp/Presencial)")
+                    st.caption("Use esta opção quando a cliente fechar o agendamento diretamente com você.")
+                    
+                    with st.form("form_agendar_manual_admin"):
+                        c_m1, c_m2 = st.columns(2)
+                        with c_m1:
+                            nome_manual = st.text_input("Nome da Cliente:")
+                            tel_manual = st.text_input("Telefone / WhatsApp:", placeholder="(19) 99999-9999")
+                            servico_manual = st.text_input("Serviço / Estilo de Trança:", placeholder="ex: Box Braids")
+                        
+                        with c_m2:
+                            data_manual = st.date_input("Data do Atendimento:", key="data_manual_admin")
+                            horario_manual = st.text_input("Horário Combinado:", placeholder="ex: 09:00")
+                            status_manual = st.selectbox("Status Inicial:", ["Confirmado", "Pendente"])
+
+                        btn_salvar_manual = st.form_submit_button("📌 Confirmar Agendamento Manual", use_container_width=True)
+                        
+                        if btn_salvar_manual:
+                            if nome_manual and tel_manual:
+                                # Insere diretamente no banco na coleção 'agendamentos'
+                                db.collection("agendamentos").add({
+                                    "cliente_nome": nome_manual,
+                                    "cliente_telefone": tel_manual,
+                                    "servico": servico_manual or "Não especificado",
+                                    "data_agendamento": str(data_manual),
+                                    "horario": horario_manual or "A combinar",
+                                    "status": status_manual,
+                                    "criado_em": datetime.now().strftime("%Y-%m-%d %H:%M")
+                                })
+                                st.success(f"Agendamento de {nome_manual} cadastrado com sucesso!")
+                                st.rerun()
+                            else:
+                                st.error("Preencha ao menos o Nome e o WhatsApp da cliente.")
