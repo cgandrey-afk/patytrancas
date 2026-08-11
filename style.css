@@ -93,8 +93,10 @@ div[role="radiogroup"] label span {
 }
 
 /* =============================================================
-   4. ESTILIZAÇÃO DE BOTÕES
+   4. ESTILIZAÇÃO E REGRA DOS MENUS (DESKTOP E MOBILE)
    ============================================================= */
+
+/* Estilo Base dos Botões Globais */
 div.stButton > button, 
 div.stFormSubmitButton > button {
     background-color: #ffffff !important;
@@ -112,12 +114,17 @@ div.stFormSubmitButton > button:hover {
     border-color: #e05297 !important;
 }
 
-/* --- A. MENU DESKTOP (BOTÕES LADO A LADO) --- */
+/* --- VISIBILIDADES PADRÃO (DESKTOP: TELAS > 768px) --- */
 .menu-desktop {
     display: block !important;
     width: 100% !important;
 }
 
+.menu-mobile {
+    display: none !important; /* Esconde o Expander no PC */
+}
+
+/* Formatação do Menu Horizontal no PC */
 .menu-desktop div[data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-direction: row !important;
@@ -140,16 +147,9 @@ div.stFormSubmitButton > button:hover {
     font-size: clamp(0.68rem, 2.2vw, 0.85rem) !important;
     border-radius: 12px !important;
     white-space: nowrap !important;
-    text-overflow: ellipsis !important;
-    overflow: hidden !important;
 }
 
-/* --- B. MENU MOBILE (OCULTO NO DESKTOP) --- */
-.menu-mobile {
-    display: none !important;
-}
-
-/* --- C. AÇÕES DE FORMULÁRIO --- */
+/* --- BOTOES DE AÇÃO / FORMULÁRIO --- */
 .botoes-acao div.stButton,
 .botoes-acao div.stFormSubmitButton {
     width: 100% !important;
@@ -162,21 +162,29 @@ div.stFormSubmitButton > button:hover {
     font-size: 0.95rem !important;
 }
 
+
 /* =============================================================
-   5. RESPONSIVIDADE (MEDIA QUERIES)
+   5. RESPONSIVIDADE (MOBILE: TELAS <= 768px)
    ============================================================= */
 @media screen and (max-width: 768px) {
-    /* Alterna a exibição dos menus */
-    .menu-desktop {
+    
+    /* 1. ESCONDE TOTALMENTE O MENU HORIZONTAL NO CELULAR */
+    .menu-desktop,
+    .menu-desktop * {
         display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        visibility: hidden !important;
     }
 
+    /* 2. EXIBE O BOTÃO MENU (EXPANDER) NO CELULAR */
     .menu-mobile {
         display: block !important;
         margin-bottom: 10px !important;
     }
 
-    /* Estilização do container do menu mobile (st.expander) */
+    /* Estilização do Botão/Caixa do Menu Mobile */
     .menu-mobile div[data-testid="stExpander"] {
         border: 2px solid #f2c4ce !important;
         background-color: #ffffff !important;
@@ -191,7 +199,7 @@ div.stFormSubmitButton > button:hover {
         padding: 10px 14px !important;
     }
 
-    /* Botões dentro do menu desdobrável do celular */
+    /* Botões verticais que aparecem ao clicar em "≡ MENU DE NAVEGAÇÃO" */
     .menu-mobile div.stButton > button {
         width: 100% !important;
         text-align: left !important;
@@ -209,14 +217,8 @@ div.stFormSubmitButton > button:hover {
         color: #ffffff !important;
     }
 
-    /* Ajustes gerais de cards para celular */
+    /* Ajustes nos Cards no celular */
     .content-card, .agendamento-card {
         padding: 14px !important;
-    }
-
-    /* Botões fora do menu se adaptam ao toque mobile */
-    :not(.menu-desktop):not(.menu-mobile) > div.stButton > button,
-    :not(.menu-desktop):not(.menu-mobile) > div.stFormSubmitButton > button {
-        padding: 12px 8px !important;
     }
 }
