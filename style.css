@@ -123,7 +123,7 @@ div.stButton > button[data-testid="stBaseButton-primary"] {
 
 /* --- REGRAS PARA TELA DE COMPUTADOR (DESKTOP > 768px) --- */
 
-/* Exibe o menu horizontal do topo */
+/* Exibe o menu horizontal no topo */
 .nav-desktop {
     display: block !important;
 }
@@ -140,13 +140,15 @@ div.stButton > button[data-testid="stBaseButton-primary"] {
     min-width: 0 !important;
 }
 
-/* ESCONDE A SIDEBAR E O BOTÃO DO ÍCONE DA SIDEBAR NO PC */
+/* ESCONDE A SIDEBAR E O BOTÃO DE ABRIR NO PC */
 section[data-testid="stSidebar"] {
     display: none !important;
 }
 
-button[data-testid="stHeaderNavigateButton"],
-button[data-testid="stSidebarCollapseButton"] {
+/* Oculta qualquer controle/ícone de abrir a sidebar no topo no PC */
+div[data-testid="stSidebarCollapsedControl"],
+button[data-testid="stSidebarCollapseButton"],
+header[data-testid="stHeader"] button {
     display: none !important;
 }
 
@@ -169,7 +171,7 @@ button[data-testid="stSidebarCollapseButton"] {
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. ESCONDE OS BOTÕES DO TOPO NO CELULAR */
+    /* 1. ESCONDE OS BOTÕES HORIZONTAIS DO TOPO NO CELULAR */
     .nav-desktop {
         display: none !important;
         height: 0 !important;
@@ -177,21 +179,32 @@ button[data-testid="stSidebarCollapseButton"] {
         padding: 0 !important;
     }
 
-    /* 2. REEXIBE A SIDEBAR E O BOTÃO DE ABRIR O MENU NO CELULAR */
+    /* 2. REEXIBE O CONTROLE E BOTÃO DA SIDEBAR NO CELULAR */
+    div[data-testid="stSidebarCollapsedControl"],
+    button[data-testid="stSidebarCollapseButton"],
+    header[data-testid="stHeader"] button {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 999999 !important;
+    }
+
+    /* Estiliza o ícone/botão da sidebar no topo do celular para destacar em rosa */
+    div[data-testid="stSidebarCollapsedControl"] button,
+    header[data-testid="stHeader"] button {
+        background-color: #ffffff !important;
+        border: 2px solid #e05297 !important;
+        border-radius: 10px !important;
+        color: #e05297 !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Garante que o painel lateral funcione normalmente ao ser aberto */
     section[data-testid="stSidebar"] {
         display: block !important;
     }
 
-    button[data-testid="stHeaderNavigateButton"],
-    button[data-testid="stSidebarCollapseButton"] {
-        display: flex !important;
-        background-color: #ffffff !important;
-        border: 2px solid #f2c4ce !important;
-        border-radius: 10px !important;
-        color: #e05297 !important;
-    }
-
-    /* Botões dentro da Sidebar no Celular */
+    /* Estilização dos botões internos na Sidebar no celular */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
