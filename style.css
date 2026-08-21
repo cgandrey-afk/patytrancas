@@ -121,71 +121,38 @@ div.stButton > button[data-testid="stBaseButton-primary"] {
     border-color: #e05297 !important;
 }
 
-/* --- REGRAS PARA TELA DE COMPUTADOR (DESKTOP > 768px) --- */
+/* --- COMPUTADOR (TELAS MAIORES QUE 768px) --- */
 
-/* Exibe o menu horizontal no topo */
-.nav-desktop {
-    display: block !important;
-}
-
-.nav-desktop div[data-testid="stHorizontalBlock"] {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    gap: 4px !important;
-}
-
-.nav-desktop div[data-testid="column"] {
-    flex: 1 1 0px !important;
-    min-width: 0 !important;
-}
-
-/* ESCONDE A SIDEBAR E O BOTÃO DE ABRIR NO PC */
+/* Oculta a Sidebar no PC */
 section[data-testid="stSidebar"] {
     display: none !important;
 }
 
-/* Oculta qualquer controle/ícone de abrir a sidebar no topo no PC */
 div[data-testid="stSidebarCollapsedControl"],
 button[data-testid="stSidebarCollapseButton"],
 header[data-testid="stHeader"] button {
     display: none !important;
 }
 
-/* --- BOTOES DE AÇÃO / FORMULÁRIO --- */
-.botoes-acao div.stButton,
-.botoes-acao div.stFormSubmitButton {
-    width: 100% !important;
-}
-
-.botoes-acao div.stButton > button,
-.botoes-acao div.stFormSubmitButton > button {
-    width: 100% !important;
-    padding: 10px 14px !important;
-    font-size: 0.95rem !important;
-}
-
 
 /* =============================================================
-   5. RESPONSIVIDADE (MOBILE: TELAS <= 768px)
+   5. RESPONSIVIDADE (MOBILE: TELAS MENORES OU IGUAIS A 768px)
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. FORÇA O OCULTAMENTO TOTAL DO MENU DESKTOP NO CELULAR */
-    .nav-desktop,
-    .nav-desktop *,
-    div:has(> .nav-desktop) {
+    /* 1. OCULTA A LINHA/BLOCO INTEIRO DOS BOTÕES HORIZONTAIS NO CELULAR */
+    div[data-testid="stVerticalBlock"] > div:has(.menu-desktop-target) {
         display: none !important;
         height: 0 !important;
-        max-height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
     }
 
-    /* 2. REEXIBE O CONTROLE E BOTÃO DA SIDEBAR NO CELULAR */
+    /* 2. EXIBE A SIDEBAR E O BOTÃO DE ABRIR NO CELULAR */
+    section[data-testid="stSidebar"] {
+        display: block !important;
+    }
+
     div[data-testid="stSidebarCollapsedControl"],
     button[data-testid="stSidebarCollapseButton"],
     header[data-testid="stHeader"] button {
@@ -195,22 +162,16 @@ header[data-testid="stHeader"] button {
         z-index: 999999 !important;
     }
 
-    /* Estiliza o ícone/botão da sidebar no topo do celular para destacar em rosa */
+    /* Estiliza o botão de abrir o menu lateral no celular */
     div[data-testid="stSidebarCollapsedControl"] button,
     header[data-testid="stHeader"] button {
         background-color: #ffffff !important;
         border: 2px solid #e05297 !important;
         border-radius: 10px !important;
         color: #e05297 !important;
-        padding: 4px 8px !important;
     }
 
-    /* Garante que o painel lateral funcione normalmente ao ser aberto */
-    section[data-testid="stSidebar"] {
-        display: block !important;
-    }
-
-    /* Estilização dos botões internos na Sidebar no celular */
+    /* Estilo dos botões internos na Sidebar no celular */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
@@ -218,9 +179,5 @@ header[data-testid="stHeader"] button {
         margin-bottom: 6px !important;
         font-size: 0.95rem !important;
         justify-content: flex-start !important;
-    }
-
-    .content-card, .agendamento-card {
-        padding: 14px !important;
     }
 }
