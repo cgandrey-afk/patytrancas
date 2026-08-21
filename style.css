@@ -9,14 +9,15 @@
     font-family: 'Poppins', sans-serif !important;
 }
 
-/* Esconde apenas os elementos decorativos do topo, preservando a área do header no mobile */
-#MainMenu, footer { 
-    visibility: hidden !important; 
+/* Oculta os menus extras e a barra de ferramentas nativa (Share, Star, etc) de forma GLOBAL */
+#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stStatusWidget"] { 
+    display: none !important; 
 }
 
-/* Transparece o header padrão do Streamlit para não poluir, mas mantendo interativo */
+/* Mantém o header transparente e sem fundo */
 header[data-testid="stHeader"] {
     background-color: transparent !important;
+    z-index: 999999 !important;
 }
 
 .stAppViewMainTarget { 
@@ -151,28 +152,20 @@ header[data-testid="stHeader"] button {
         overflow: hidden !important;
     }
 
-    /* 2. OCULTA TODOS OS ÍCONES NATIVOS DO HEADER EXCETO O CONTROLE DA SIDEBAR */
-    header[data-testid="stHeader"] [data-testid="stToolbar"],
-    header[data-testid="stHeader"] [data-testid="stDecoration"],
-    header[data-testid="stHeader"] [data-testid="stStatusWidget"] {
-        display: none !important;
-    }
-
-    /* 3. EXIBE A SIDEBAR E O CONTROLE DE ABERTURA */
+    /* 2. EXIBE A SIDEBAR E O SEU BOTÃO DE CONTROLE NO CELULAR */
     section[data-testid="stSidebar"] {
         display: block !important;
     }
 
     div[data-testid="stSidebarCollapsedControl"],
     button[data-testid="stSidebarCollapseButton"],
-    [data-testid="stSidebarUserContent"] button {
+    header[data-testid="stHeader"] button {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        z-index: 999999 !important;
     }
 
-    /* 4. ESTILIZAÇÃO EXCLUSIVA DO BOTÃO DO MENU */
+    /* 3. TRANSFORMA APENAS O BOTÃO DA SIDEBAR NO TEXTO "👑 MENU" */
     div[data-testid="stSidebarCollapsedControl"] button,
     button[data-testid="stSidebarCollapseButton"] {
         background-color: #ffffff !important;
@@ -188,13 +181,13 @@ header[data-testid="stHeader"] button {
         justify-content: center !important;
     }
 
-    /* Oculta as setas em SVG do botão */
+    /* Esconde a seta em vetor (SVG) do Streamlit */
     div[data-testid="stSidebarCollapsedControl"] button svg,
     button[data-testid="stSidebarCollapseButton"] svg {
         display: none !important;
     }
 
-    /* Injeta a palavra MENU apenas no botão do Sidebar */
+    /* Escreve o texto 👑 MENU */
     div[data-testid="stSidebarCollapsedControl"] button::before,
     button[data-testid="stSidebarCollapseButton"]::before {
         content: "👑 MENU" !important;
@@ -206,7 +199,7 @@ header[data-testid="stHeader"] button {
         letter-spacing: 0.5px !important;
     }
 
-    /* Botões internos dentro do menu lateral aberto */
+    /* Botões dentro do menu lateral quando aberto */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
