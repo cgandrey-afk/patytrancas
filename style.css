@@ -171,12 +171,18 @@ header[data-testid="stHeader"] button {
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. ESCONDE OS BOTÕES HORIZONTAIS DO TOPO NO CELULAR */
-    .nav-desktop {
+    /* 1. FORÇA O OCULTAMENTO TOTAL DO MENU DESKTOP NO CELULAR */
+    .nav-desktop,
+    .nav-desktop *,
+    div:has(> .nav-desktop) {
         display: none !important;
         height: 0 !important;
+        max-height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 
     /* 2. REEXIBE O CONTROLE E BOTÃO DA SIDEBAR NO CELULAR */
