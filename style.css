@@ -96,7 +96,34 @@ div[role="radiogroup"] label span {
    4. ESTILIZAÇÃO E REGRA DOS MENUS (DESKTOP E MOBILE)
    ============================================================= */
 
-/* --- VISIBILIDADE NO PC (TELAS > 768px) --- */
+/* Estilo Base dos Botões Globais */
+div.stButton > button, 
+div.stFormSubmitButton > button {
+    background-color: #ffffff !important;
+    color: #e05297 !important;
+    border: 2px solid #f2c4ce !important;
+    border-radius: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+div.stButton > button:hover,
+div.stFormSubmitButton > button:hover {
+    background-color: #e05297 !important;
+    color: #ffffff !important;
+    border-color: #e05297 !important;
+}
+
+/* Estilo para o botão selecionado (primary) */
+div.stButton > button[data-testid="stBaseButton-primary"] {
+    background-color: #e05297 !important;
+    color: #ffffff !important;
+    border-color: #e05297 !important;
+}
+
+/* --- REGRAS PARA TELA DE COMPUTADOR (DESKTOP > 768px) --- */
+
+/* Exibe o menu horizontal do topo */
 .nav-desktop {
     display: block !important;
 }
@@ -113,24 +140,36 @@ div[role="radiogroup"] label span {
     min-width: 0 !important;
 }
 
-.nav-desktop div.stButton > button {
-    width: 100% !important;
-    padding: 8px 2px !important;
-    font-size: clamp(0.7rem, 1.2vw, 0.85rem) !important;
-    white-space: nowrap !important;
-}
-
-/* Oculta o Selectbox Mobile no PC */
-.nav-mobile {
+/* ESCONDE A SIDEBAR E O BOTÃO DO ÍCONE DA SIDEBAR NO PC */
+section[data-testid="stSidebar"] {
     display: none !important;
 }
+
+button[data-testid="stHeaderNavigateButton"],
+button[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
+/* --- BOTOES DE AÇÃO / FORMULÁRIO --- */
+.botoes-acao div.stButton,
+.botoes-acao div.stFormSubmitButton {
+    width: 100% !important;
+}
+
+.botoes-acao div.stButton > button,
+.botoes-acao div.stFormSubmitButton > button {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.95rem !important;
+}
+
 
 /* =============================================================
    5. RESPONSIVIDADE (MOBILE: TELAS <= 768px)
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* Esconde o menu de botões no celular */
+    /* 1. ESCONDE OS BOTÕES DO TOPO NO CELULAR */
     .nav-desktop {
         display: none !important;
         height: 0 !important;
@@ -138,10 +177,31 @@ div[role="radiogroup"] label span {
         padding: 0 !important;
     }
 
-    /* Exibe o selectbox no celular */
-    .nav-mobile {
+    /* 2. REEXIBE A SIDEBAR E O BOTÃO DE ABRIR O MENU NO CELULAR */
+    section[data-testid="stSidebar"] {
         display: block !important;
+    }
+
+    button[data-testid="stHeaderNavigateButton"],
+    button[data-testid="stSidebarCollapseButton"] {
+        display: flex !important;
+        background-color: #ffffff !important;
+        border: 2px solid #f2c4ce !important;
+        border-radius: 10px !important;
+        color: #e05297 !important;
+    }
+
+    /* Botões dentro da Sidebar no Celular */
+    section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
-        margin-bottom: 10px !important;
+        text-align: left !important;
+        padding: 12px 16px !important;
+        margin-bottom: 6px !important;
+        font-size: 0.95rem !important;
+        justify-content: flex-start !important;
+    }
+
+    .content-card, .agendamento-card {
+        padding: 14px !important;
     }
 }

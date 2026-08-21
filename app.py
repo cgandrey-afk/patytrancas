@@ -100,7 +100,7 @@ st.markdown("""
 
 
 # ==========================================
-# 3. MENU DE NAVEGAÇÃO RESPONSIVO (SOLUÇÃO DIRETA)
+# 3. MENU DE NAVEGAÇÃO RESPONSIVO
 # ==========================================
 if "pagina_atual" not in st.session_state:
     st.session_state["pagina_atual"] = "📖 Catálogo"
@@ -114,28 +114,28 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# Wrapper HTML ÚNICO para o Menu Desktop
+# --- A. MENU DESKTOP (Exibido no topo em telas grandes) ---
 st.markdown('<div class="nav-desktop">', unsafe_allow_html=True)
 cols = st.columns(len(opcoes_menu))
 for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
     with col:
-        if st.button(label, key=f"btn_desk_{label}", use_container_width=True):
+        # Destaca o botão ativo no desktop
+        tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
+        if st.button(label, key=f"btn_desk_{label}", type=tipo_btn, use_container_width=True):
             st.session_state["pagina_atual"] = pagina_target
             st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Wrapper HTML ÚNICO para o Menu Mobile
-st.markdown('<div class="nav-mobile">', unsafe_allow_html=True)
-opcao_selecionada = st.selectbox(
-    "≡ NAVEGAÇÃO",
-    options=list(opcoes_menu.keys()),
-    index=list(opcoes_menu.values()).index(st.session_state["pagina_atual"]),
-    key="select_nav_mobile"
-)
-if opcoes_menu[opcao_selecionada] != st.session_state["pagina_atual"]:
-    st.session_state["pagina_atual"] = opcoes_menu[opcao_selecionada]
-    st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
+# --- B. MENU SIDEBAR (Oculto no PC, usado via menu nativo no Mobile) ---
+with st.sidebar:
+    st.markdown("<h2 style='text-align: center; color: #e05297;'>👑 Menu</h2>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: 1px solid #f2c4ce;'>", unsafe_allow_html=True)
+    
+    for label, pagina_target in opcoes_menu.items():
+        tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
+        if st.button(label, key=f"btn_side_{label}", type=tipo_btn, use_container_width=True):
+            st.session_state["pagina_atual"] = pagina_target
+            st.rerun()
 
 st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
