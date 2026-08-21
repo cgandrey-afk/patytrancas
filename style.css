@@ -142,19 +142,16 @@ header[data-testid="stHeader"] button {
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. OCULTA OS BOTÕES DO TOPO NO CELULAR (Mirando na div pai e nos filhos) */
-    .nav-desktop,
-    .nav-desktop + div,
-    div:has(> .nav-desktop),
-    div[data-testid="stHorizontalBlock"]:has(.nav-desktop) {
+    /* 1. OCULTA O BLOCO COMPLETO DOS BOTÕES DO DESKTOP NO CELULAR */
+    div[data-testid="stVerticalBlock"] > div:has(.menu-desktop-anchor) {
         display: none !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        height: 0px !important;
+        margin: 0px !important;
+        padding: 0px !important;
         overflow: hidden !important;
     }
 
-    /* 2. REEXIBE A SIDEBAR E O BOTÃO NO CELULAR */
+    /* 2. EXIBE O BOTÃO E A SIDEBAR NO CELULAR */
     section[data-testid="stSidebar"] {
         display: block !important;
     }
@@ -168,7 +165,7 @@ header[data-testid="stHeader"] button {
         z-index: 999999 !important;
     }
 
-    /* Estiliza o botão de abrir a barra lateral no topo do celular */
+    /* Estilização do ícone da barra lateral no celular */
     div[data-testid="stSidebarCollapsedControl"] button,
     header[data-testid="stHeader"] button {
         background-color: #ffffff !important;
@@ -177,7 +174,7 @@ header[data-testid="stHeader"] button {
         color: #e05297 !important;
     }
 
-    /* Ajuste dos botões dentro da barra lateral no celular */
+    /* Botões dentro do menu lateral */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;

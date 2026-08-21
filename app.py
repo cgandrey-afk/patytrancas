@@ -114,18 +114,18 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# --- A. MENU DESKTOP (Botões lado a lado - Oculto no celular via CSS) ---
-st.markdown('<div class="nav-desktop">', unsafe_allow_html=True)
-cols = st.columns(len(opcoes_menu))
-for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
-    with col:
-        tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
-        if st.button(label, key=f"btn_desk_{label}", type=tipo_btn, use_container_width=True):
-            st.session_state["pagina_atual"] = pagina_target
-            st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
+# --- A. MENU DESKTOP (Isolado em um Container com chave CSS) ---
+with st.container():
+    st.markdown('<div class="menu-desktop-anchor"></div>', unsafe_allow_html=True)
+    cols = st.columns(len(opcoes_menu))
+    for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
+        with col:
+            tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
+            if st.button(label, key=f"btn_desk_{label}", type=tipo_btn, use_container_width=True):
+                st.session_state["pagina_atual"] = pagina_target
+                st.rerun()
 
-# --- B. MENU MOBILE (Sidebar nativa - Exibida apenas no celular via CSS) ---
+# --- B. MENU MOBILE (Sidebar) ---
 with st.sidebar:
     st.markdown("<h2 style='text-align: center; color: #e05297;'>👑 Menu</h2>", unsafe_allow_html=True)
     st.markdown("<hr style='border: 1px solid #f2c4ce;'>", unsafe_allow_html=True)
