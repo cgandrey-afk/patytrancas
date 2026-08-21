@@ -151,23 +151,25 @@ header[data-testid="stHeader"] button {
         overflow: hidden !important;
     }
 
-    /* 2. EXIBE O BOTÃO E A SIDEBAR NO CELULAR */
+    /* 2. OCULTA TODOS OS OUTROS BOTÕES NATIVOS DO HEADER (Share, Edit, Star, etc) */
+    header[data-testid="stHeader"] button:not([data-testid="stSidebarCollapseButton"]) {
+        display: none !important;
+    }
+
+    /* 3. EXIBE A SIDEBAR E APENAS O BOTÃO DE ABRIR O MENU NO CELULAR */
     section[data-testid="stSidebar"] {
         display: block !important;
     }
 
-    div[data-testid="stSidebarCollapsedControl"],
-    button[data-testid="stSidebarCollapseButton"],
-    header[data-testid="stHeader"] button {
+    div[data-testid="stSidebarCollapsedControl"] {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
         z-index: 999999 !important;
     }
 
-    /* Estilização e formatação do container do botão */
-    div[data-testid="stSidebarCollapsedControl"] button,
-    header[data-testid="stHeader"] button {
+    /* Estilização exclusiva do botão da Sidebar */
+    div[data-testid="stSidebarCollapsedControl"] button {
         background-color: #ffffff !important;
         border: 2px solid #e05297 !important;
         border-radius: 10px !important;
@@ -181,15 +183,13 @@ header[data-testid="stHeader"] button {
         justify-content: center !important;
     }
 
-    /* Oculta o ícone de setas (SVG) padrão do Streamlit */
-    div[data-testid="stSidebarCollapsedControl"] button svg,
-    header[data-testid="stHeader"] button svg {
+    /* Oculta as setas SVG apenas do botão da sidebar */
+    div[data-testid="stSidebarCollapsedControl"] button svg {
         display: none !important;
     }
 
-    /* Injeta o texto MENU no lugar do ícone */
-    div[data-testid="stSidebarCollapsedControl"] button::before,
-    header[data-testid="stHeader"] button::before {
+    /* Injeta o texto MENU exclusivamente no botão da barra lateral */
+    div[data-testid="stSidebarCollapsedControl"] button::before {
         content: "👑 MENU" !important;
         font-family: 'Poppins', sans-serif !important;
         font-weight: 700 !important;
@@ -199,7 +199,7 @@ header[data-testid="stHeader"] button {
         letter-spacing: 0.5px !important;
     }
 
-    /* Botões dentro do menu lateral */
+    /* Botões internos do menu lateral */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;
