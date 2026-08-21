@@ -9,9 +9,14 @@
     font-family: 'Poppins', sans-serif !important;
 }
 
-/* Oculta elementos padrão do Streamlit */
-#MainMenu, footer, header { 
+/* Esconde apenas os elementos decorativos do topo, preservando a área do header no mobile */
+#MainMenu, footer { 
     visibility: hidden !important; 
+}
+
+/* Transparece o header padrão do Streamlit para não poluir, mas mantendo interativo */
+header[data-testid="stHeader"] {
+    background-color: transparent !important;
 }
 
 .stAppViewMainTarget { 
@@ -33,7 +38,6 @@ p, h1, h2, h3, h4, span {
     color: #262730 !important;
 }
 
-/* Inputs de texto, selectbox e dropdowns */
 div[data-testid="stTextInput"] input,
 div[data-baseweb="select"] * {
     color: #262730 !important;
@@ -42,7 +46,6 @@ div[data-baseweb="select"] * {
     border-radius: 10px !important;
 }
 
-/* Radio buttons */
 div[role="radiogroup"] label {
     background-color: #fdf8fa !important;
     border: 1px solid #f2c4ce !important;
@@ -121,9 +124,9 @@ div.stButton > button[data-testid="stBaseButton-primary"] {
     border-color: #e05297 !important;
 }
 
-/* --- COMPUTADOR (TELAS MAIORES QUE 768px) --- */
+/* --- REGRAS PARA COMPUTADOR (DESKTOP > 768px) --- */
 
-/* Oculta a Sidebar no PC */
+/* Esconde a Sidebar e o botão do topo no PC */
 section[data-testid="stSidebar"] {
     display: none !important;
 }
@@ -134,21 +137,24 @@ header[data-testid="stHeader"] button {
     display: none !important;
 }
 
-
 /* =============================================================
-   5. RESPONSIVIDADE (MOBILE: TELAS MENORES OU IGUAIS A 768px)
+   5. RESPONSIVIDADE (MOBILE: TELAS <= 768px)
    ============================================================= */
 @media screen and (max-width: 768px) {
     
-    /* 1. OCULTA A LINHA/BLOCO INTEIRO DOS BOTÕES HORIZONTAIS NO CELULAR */
-    div[data-testid="stVerticalBlock"] > div:has(.menu-desktop-target) {
+    /* 1. OCULTA OS BOTÕES DO TOPO NO CELULAR (Mirando na div pai e nos filhos) */
+    .nav-desktop,
+    .nav-desktop + div,
+    div:has(> .nav-desktop),
+    div[data-testid="stHorizontalBlock"]:has(.nav-desktop) {
         display: none !important;
         height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow: hidden !important;
     }
 
-    /* 2. EXIBE A SIDEBAR E O BOTÃO DE ABRIR NO CELULAR */
+    /* 2. REEXIBE A SIDEBAR E O BOTÃO NO CELULAR */
     section[data-testid="stSidebar"] {
         display: block !important;
     }
@@ -162,7 +168,7 @@ header[data-testid="stHeader"] button {
         z-index: 999999 !important;
     }
 
-    /* Estiliza o botão de abrir o menu lateral no celular */
+    /* Estiliza o botão de abrir a barra lateral no topo do celular */
     div[data-testid="stSidebarCollapsedControl"] button,
     header[data-testid="stHeader"] button {
         background-color: #ffffff !important;
@@ -171,7 +177,7 @@ header[data-testid="stHeader"] button {
         color: #e05297 !important;
     }
 
-    /* Estilo dos botões internos na Sidebar no celular */
+    /* Ajuste dos botões dentro da barra lateral no celular */
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
         text-align: left !important;

@@ -114,30 +114,26 @@ opcoes_menu = {
     "🔒 Admin": "🔒 Área Administrativa"
 }
 
-# --- A. MENU DESKTOP (Exibido no topo em telas grandes) ---
+# --- MENU DESKTOP (Botões lado a lado) ---
+st.markdown('<div class="menu-desktop-target"></div>', unsafe_allow_html=True)
+cols = st.columns(len(opcoes_menu))
+for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
+    with col:
+        tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
+        if st.button(label, key=f"btn_desk_{label}", type=tipo_btn, use_container_width=True):
+            st.session_state["pagina_atual"] = pagina_target
+            st.rerun()
+
+# Encapsule o bloco de colunas na classe .nav-desktop
 st.markdown('<div class="nav-desktop">', unsafe_allow_html=True)
 cols = st.columns(len(opcoes_menu))
 for col, (label, pagina_target) in zip(cols, opcoes_menu.items()):
     with col:
-        # Destaca o botão ativo no desktop
         tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
         if st.button(label, key=f"btn_desk_{label}", type=tipo_btn, use_container_width=True):
             st.session_state["pagina_atual"] = pagina_target
             st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
-
-# --- B. MENU SIDEBAR (Oculto no PC, usado via menu nativo no Mobile) ---
-with st.sidebar:
-    st.markdown("<h2 style='text-align: center; color: #e05297;'>👑 Menu</h2>", unsafe_allow_html=True)
-    st.markdown("<hr style='border: 1px solid #f2c4ce;'>", unsafe_allow_html=True)
-    
-    for label, pagina_target in opcoes_menu.items():
-        tipo_btn = "primary" if st.session_state["pagina_atual"] == pagina_target else "secondary"
-        if st.button(label, key=f"btn_side_{label}", type=tipo_btn, use_container_width=True):
-            st.session_state["pagina_atual"] = pagina_target
-            st.rerun()
-
-st.markdown("<hr style='border: 1px solid #f2c4ce; margin-top: 5px; margin-bottom: 15px;'>", unsafe_allow_html=True)
 
 # ==========================================
 # 4. RENDERIZAÇÃO DAS PÁGINAS
